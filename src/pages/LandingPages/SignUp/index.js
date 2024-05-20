@@ -32,22 +32,30 @@ import { toast } from "react-toastify";
 import EyeIcons from "@heroicons/react/24/solid/EyeIcon";
 import EyeSlashIcon from "@heroicons/react/24/solid/EyeSlashIcon";
 
-function SignInBasic() {
+function SignUpBasic() {
   const [rememberMe, setRememberMe] = useState(false);
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
 
   const [showPassword, setShowPassword] = useState(false);
   const handleShowPassword = () => setShowPassword(!showPassword);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const handleShowConfirmPassword = () => setShowConfirmPassword(!showConfirmPassword);
 
   const formik = useFormik({
     initialValues: {
+      name: "",
       email: "",
       password: "",
+      confirmPassword: "",
       submit: null,
     },
     validationSchema: Yup.object({
+      name: Yup.string().max(255).required("Name is required"),
       email: Yup.string().email("Invalid email address").required("Email is required"),
       password: Yup.string().max(255).required("Password is required"),
+      confirmPassword: Yup.string()
+        .oneOf([Yup.ref("password"), null], "Passwords must match")
+        .required("Confirm password is required"),
     }),
     onSubmit: async (values, helpers) => {
       try {
@@ -89,11 +97,25 @@ function SignInBasic() {
             <Card>
               <MKBox borderRadius="lg" mx={2} px={4} pt={3} pb={2} textAlign="center">
                 <MKTypography variant="h3" fontWeight="medium" color="black" my={0.8}>
-                  Sign In
+                  Sign Up
                 </MKTypography>
               </MKBox>
               <MKBox pt={0.5} pb={3} px={8}>
                 <MKBox component="form" role="form" onSubmit={formik.handleSubmit}>
+                  <MKBox mb={2.5}>
+                    <MKInput
+                      name="name"
+                      type="text"
+                      label="Name"
+                      fullWidth
+                      value={formik.values.name}
+                      onBlur={formik.handleBlur}
+                      onChange={formik.handleChange}
+                      error={!!(formik.touched.name && formik.errors.name)}
+                      success={formik.touched.name && !formik.errors.name}
+                      helperText={formik.touched.name && formik.errors.name}
+                    />
+                  </MKBox>
                   <MKBox mb={2.5}>
                     <MKInput
                       name="email"
@@ -133,17 +155,30 @@ function SignInBasic() {
                       }}
                     />
                   </MKBox>
-                  <MKBox display="flex" alignItems="center" ml={-1}>
-                    <Switch checked={rememberMe} onChange={handleSetRememberMe} />
-                    <MKTypography
-                      variant="button"
-                      fontWeight="regular"
-                      color="text"
-                      onClick={handleSetRememberMe}
-                      sx={{ cursor: "pointer", userSelect: "none", ml: -1 }}
-                    >
-                      &nbsp;&nbsp;Remember me
-                    </MKTypography>
+                  <MKBox mb={2.5}>
+                    <MKInput
+                      name="confirmPassword"
+                      type={showConfirmPassword ? "text" : "password"}
+                      label="Confirm Password"
+                      fullWidth
+                      value={formik.values.confirmPassword}
+                      onBlur={formik.handleBlur}
+                      onChange={formik.handleChange}
+                      error={!!(formik.touched.confirmPassword && formik.errors.confirmPassword)}
+                      success={formik.touched.confirmPassword && !formik.errors.confirmPassword}
+                      helperText={formik.touched.confirmPassword && formik.errors.confirmPassword}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton onClick={handleShowConfirmPassword} edge="end">
+                              <SvgIcon color="action" fontSize="small">
+                                {showPassword ? <EyeSlashIcon /> : <EyeIcons />}
+                              </SvgIcon>
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
                   </MKBox>
                   {formik.errors.submit && (
                     <MKTypography color="error" variant="body2" mt={0.5}>
@@ -157,16 +192,16 @@ function SignInBasic() {
                   </MKBox>
                   <MKBox mt={1} mb={1} textAlign="center">
                     <MKTypography variant="button" color="text">
-                      Don&apos;t have an account?{" "}
+                      Already have an account?{" "}
                       <MKTypography
                         component={Link}
-                        to="/pages/authentication/sign-up"
+                        to="/pages/authentication/sign-in"
                         variant="button"
                         color="info"
                         fontWeight="medium"
                         textGradient
                       >
-                        Sign up
+                        Sign in
                       </MKTypography>
                     </MKTypography>
                   </MKBox>
@@ -180,4 +215,4 @@ function SignInBasic() {
   );
 }
 
-export default SignInBasic;
+export default SignUpBasic;
