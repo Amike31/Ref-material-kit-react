@@ -45,18 +45,17 @@ export default {
   },
 
   primary: {
-    main: "#e91e63",
-    focus: "#e91e63",
+    main: "#ba546b",
+    focus: "#cf6e84",
   },
-
   secondary: {
-    main: "#7b809a",
-    focus: "#8f93a9",
+    main: "#d53b41",
+    focus: "#d9262c",
   },
 
   info: {
-    main: "#1A73E8",
-    focus: "#1662C4",
+    main: "#303082",
+    focus: "#1A73E8",
   },
 
   success: {

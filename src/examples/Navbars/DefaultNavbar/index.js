@@ -434,7 +434,7 @@ function DefaultNavbar({ brand, routes, transparent, light, action, sticky, rela
   );
 
   return (
-    <Container sx={sticky ? { position: "sticky", top: 0, zIndex: 10 } : null} fullWidth>
+    <Container sx={sticky ? { position: "sticky", top: 0, zIndex: 10 } : null}>
       <MKBox
         py={1}
         px={{ xs: 4, sm: transparent ? 2 : 3, lg: transparent ? 0 : 2 }}
@@ -461,7 +461,7 @@ function DefaultNavbar({ brand, routes, transparent, light, action, sticky, rela
             py={transparent ? 1.5 : 0.75}
             pl={relative || transparent ? 0 : { xs: 0, lg: 1 }}
           >
-            <MKTypography variant="button" fontWeight="bold" color={light ? "white" : "dark"}>
+            <MKTypography variant="h5" fontWeight="bold" color={light ? "white" : "dark"}>
               {brand}
             </MKTypography>
           </MKBox>
@@ -540,7 +540,7 @@ function DefaultNavbar({ brand, routes, transparent, light, action, sticky, rela
 
 // Setting default values for the props of DefaultNavbar
 DefaultNavbar.defaultProps = {
-  brand: "Chatbot AI",
+  brand: "AskAI",
   transparent: false,
   light: false,
   action: false,

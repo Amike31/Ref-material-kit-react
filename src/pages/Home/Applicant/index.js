@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 // react-router-dom components
 import { Link } from "react-router-dom";
@@ -26,13 +27,16 @@ import routes from "routes";
 // other packages
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // icons
 import EyeIcons from "@heroicons/react/24/solid/EyeIcon";
 import EyeSlashIcon from "@heroicons/react/24/solid/EyeSlashIcon";
 
 function SignInBasic() {
+  // eslint-disable-next-line no-undef
+  const url = process.env.REACT_APP_API_URL;
   const [rememberMe, setRememberMe] = useState(false);
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
 
@@ -50,28 +54,38 @@ function SignInBasic() {
       password: Yup.string().max(255).required("Password is required"),
     }),
     onSubmit: async (values, helpers) => {
-      try {
-        // TODO : add login logic here
-        // console.log(values);
-        toast.success("Login success");
-        // throw error
-        throw new Error("Login failed");
-      } catch (err) {
-        helpers.setStatus({ success: false });
-        helpers.setErrors({ submit: err.message });
-        helpers.setSubmitting(false);
-        toast.error("Login failed");
-      }
+      console.log(values);
+      console.log(url);
+      axios
+        .post(`${url}/api/auth/login`, values)
+        .then((res) => {
+          // save in local storage
+          console.log(res.data);
+          localStorage.setItem("token", res.data.token);
+          toast.success("Login success");
+          window.location.href = "/";
+        })
+        .catch((err) => {
+          // show error
+          console.log(err);
+          helpers.setStatus({ success: false });
+          helpers.setErrors({ submit: err.message });
+          helpers.setSubmitting(false);
+          toast.error("Login failed");
+        });
     },
   });
 
   return (
     <MKBox bgColor="#dddeea">
-      <DefaultNavbar routes={routes} sticky relative />
+      <MKBox bgColor="white" shadow="sm">
+        <DefaultNavbar routes={routes} sticky relative transparent />
+      </MKBox>
+      <ToastContainer />
       <MKBox
         px={1}
         width="100%"
-        height="calc(100vh - 50px)"
+        height="calc(100vh - 60px)"
         mx="auto"
         position="relative"
         zIndex={2}
@@ -151,16 +165,16 @@ function SignInBasic() {
                     </MKTypography>
                   )}
                   <MKBox mt={4} mb={1}>
-                    <MKButton variant="contained" color="info" fullWidth type="submit">
+                    <MKButton variant="contained" color="primary" fullWidth type="submit">
                       Continue
                     </MKButton>
                   </MKBox>
-                  <MKBox mt={1} mb={1} textAlign="center">
+                  <MKBox mt={2} textAlign="center">
                     <MKTypography variant="button" color="text">
                       Don&apos;t have an account?{" "}
                       <MKTypography
                         component={Link}
-                        to="/pages/authentication/sign-up"
+                        to="/sign-up-applicant"
                         variant="button"
                         color="info"
                         fontWeight="medium"
