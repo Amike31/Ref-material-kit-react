@@ -54,19 +54,14 @@ function SignInBasic() {
       password: Yup.string().max(255).required("Password is required"),
     }),
     onSubmit: async (values, helpers) => {
-      console.log(values);
-      console.log(url);
       axios
         .post(`${url}/api/auth/login`, values)
         .then((res) => {
-          // save in local storage
-          console.log(res.data);
           localStorage.setItem("token", res.data.token);
           toast.success("Login success");
           window.location.href = "/";
         })
         .catch((err) => {
-          // show error
           console.log(err);
           helpers.setStatus({ success: false });
           helpers.setErrors({ submit: err.message });
@@ -165,7 +160,13 @@ function SignInBasic() {
                     </MKTypography>
                   )}
                   <MKBox mt={4} mb={1}>
-                    <MKButton variant="contained" color="primary" fullWidth type="submit">
+                    <MKButton
+                      variant="contained"
+                      color="primary"
+                      fullWidth
+                      type="submit"
+                      size="large"
+                    >
                       Continue
                     </MKButton>
                   </MKBox>

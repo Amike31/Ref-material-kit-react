@@ -1,38 +1,34 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
-
-// react-router-dom components
 import { Link } from "react-router-dom";
 
-// @mui material components
-import Card from "@mui/material/Card";
-import Grid from "@mui/material/Grid";
-import InputAdornment from "@mui/material/InputAdornment";
-import IconButton from "@mui/material/IconButton";
-import SvgIcon from "@mui/material/SvgIcon";
+import {
+  Autocomplete,
+  Card,
+  Grid,
+  InputAdornment,
+  IconButton,
+  SvgIcon,
+  TextField,
+} from "@mui/material";
 
-// Material Kit 2 React components
 import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
 import MKInput from "components/MKInput";
 import MKButton from "components/MKButton";
 
-// Material Kit 2 React example components
 import DefaultNavbar from "examples/Navbars/DefaultNavbar";
-
-// Material Kit 2 React page layout routes
 import routes from "routes";
 
-// other packages
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
 
-// icons
 import EyeIcons from "@heroicons/react/24/solid/EyeIcon";
 import EyeSlashIcon from "@heroicons/react/24/solid/EyeSlashIcon";
 
-// SignUpBasic has role as a parameter
+import { goAPI_cities } from "utils/enums/cities";
+
 function SignUpBasic({ role }) {
   const [showPassword, setShowPassword] = useState(false);
   const handleShowPassword = () => setShowPassword(!showPassword);
@@ -43,6 +39,7 @@ function SignUpBasic({ role }) {
     initialValues: {
       name: "",
       email: "",
+      location: "",
       password: "",
       confirmPassword: "",
       submit: null,
@@ -50,6 +47,7 @@ function SignUpBasic({ role }) {
     validationSchema: Yup.object({
       name: Yup.string().max(255).required("Name is required"),
       email: Yup.string().email("Invalid email address").required("Email is required"),
+      location: Yup.string().max(255).required("Location is required"),
       password: Yup.string().max(255).required("Password is required"),
       confirmPassword: Yup.string()
         .oneOf([Yup.ref("password"), null], "Passwords must match")
@@ -59,15 +57,13 @@ function SignUpBasic({ role }) {
       try {
         // TODO : add login logic here
         // ADD ROLE TO THE VALUES
-        // console.log({ ...values, role });
-        toast.success("Login success");
-        // throw error
-        throw new Error("Login failed");
+        console.log({ ...values, role });
+        toast.success("Register success");
       } catch (err) {
         helpers.setStatus({ success: false });
         helpers.setErrors({ submit: err.message });
         helpers.setSubmitting(false);
-        toast.error("Login failed");
+        toast.error("Register failed");
       }
     },
   });
@@ -132,6 +128,36 @@ function SignUpBasic({ role }) {
                     />
                   </MKBox>
                   <MKBox mb={2.5}>
+                    <Autocomplete
+                      id="location"
+                      options={goAPI_cities}
+                      getOptionLabel={(option) => option.name}
+                      style={{ width: "100%" }}
+                      autoHighlight
+                      autoSelect
+                      autoComplete
+                      onChange={(_, newValue) => {
+                        newValue
+                          ? formik.setFieldValue("location", newValue.name)
+                          : formik.setFieldValue("location", "");
+                      }}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          name="location"
+                          type="text"
+                          label="Location (City or Regency)"
+                          fullWidth
+                          value={formik.values.location}
+                          onBlur={formik.handleBlur}
+                          error={!!(formik.touched.location && formik.errors.location)}
+                          success={formik.touched.location && !formik.errors.location}
+                          helperText={formik.touched.location && formik.errors.location}
+                        />
+                      )}
+                    />
+                  </MKBox>
+                  <MKBox mb={2.5}>
                     <MKInput
                       name="password"
                       type={showPassword ? "text" : "password"}
@@ -187,7 +213,13 @@ function SignUpBasic({ role }) {
                     </MKTypography>
                   )}
                   <MKBox mt={4} mb={1}>
-                    <MKButton variant="contained" color="primary" fullWidth type="submit">
+                    <MKButton
+                      variant="contained"
+                      color="primary"
+                      fullWidth
+                      type="submit"
+                      size="large"
+                    >
                       {role === "RECRUITER" ? "Company" : "Applicant"} Registration
                     </MKButton>
                   </MKBox>

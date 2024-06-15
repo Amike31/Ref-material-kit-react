@@ -102,7 +102,7 @@ const typography = {
 
   h6: {
     fontFamily: baseProperties.fontFamily,
-    fontSize: pxToRem(16),
+    fontSize: pxToRem(18),
     lineHeight: 1.625,
     ...baseHeadingProperties,
   },
@@ -128,11 +128,18 @@ const typography = {
     lineHeight: 1.625,
   },
 
+  body3: {
+    fontFamily: baseProperties.fontFamily,
+    fontSize: pxToRem(17),
+    fontWeight: baseProperties.fontWeightRegular,
+    lineHeight: 1.5,
+  },
+
   body2: {
     fontFamily: baseProperties.fontFamily,
     fontSize: baseProperties.fontSizeMD,
-    fontWeight: baseProperties.fontWeightLight,
-    lineHeight: 1.6,
+    fontWeight: baseProperties.fontWeightRegular,
+    lineHeight: 1.55,
   },
 
   button: {
@@ -145,7 +152,7 @@ const typography = {
 
   caption: {
     fontFamily: baseProperties.fontFamily,
-    fontSize: baseProperties.fontSizeXS,
+    fontSize: baseProperties.fontSizeSM,
     fontWeight: baseProperties.fontWeightLight,
     lineHeight: 1.25,
   },

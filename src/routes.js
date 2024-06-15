@@ -46,6 +46,8 @@ import Author from "layouts/pages/landing-pages/author";
 import SignIn from "pages/Authentication/SignIn";
 import SignUpApplicant from "pages/Authentication/SignUp/Applicant";
 import SignUpCompany from "pages/Authentication/SignUp/Company";
+import HomeApplicant from "pages/Home/Applicant";
+import ApplyCV from "pages/Application/Applicant/ApplyCV";
 
 // Sections
 import PageHeaders from "layouts/sections/page-sections/page-headers";
@@ -96,6 +98,16 @@ const routes = [
             name: "sign up company",
             route: "/sign-up-company",
             component: <SignUpCompany />,
+          },
+          {
+            name: "home applicant",
+            route: "/home-applicant",
+            component: <HomeApplicant />,
+          },
+          {
+            name: "apply cv",
+            route: "/apply-cv/:id",
+            component: <ApplyCV />,
           },
         ],
       },
