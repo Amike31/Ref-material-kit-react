@@ -13,6 +13,7 @@
   },
   "plugins": ["react", "prettier"],
   "rules": {
+    // import no unused should be deleted
     "no-unused-vars": "warn",
     "prettier/prettier": [
       "error",

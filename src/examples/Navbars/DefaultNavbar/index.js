@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 
 // prop-types is a library for typechecking of props.
 import PropTypes from "prop-types";
+import axios from "axios";
 
 // @mui material components
 import Container from "@mui/material/Container";
@@ -27,7 +28,12 @@ import DefaultNavbarMobile from "examples/Navbars/DefaultNavbar/DefaultNavbarMob
 // Material Kit 2 React base styles
 import breakpoints from "assets/theme/base/breakpoints";
 
+// heroicons
+import { XMarkIcon } from "@heroicons/react/24/solid";
+
 function DefaultNavbar({ brand, routes, transparent, light, action, sticky, relative, center }) {
+  // eslint-disable-next-line no-undef
+  const url = process.env.REACT_APP_API_URL;
   const [dropdown, setDropdown] = useState("");
   const [dropdownEl, setDropdownEl] = useState("");
   const [dropdownName, setDropdownName] = useState("");
@@ -474,41 +480,33 @@ function DefaultNavbar({ brand, routes, transparent, light, action, sticky, rela
           >
             {renderNavbarItems}
           </MKBox>
-          {/* ACTIONS */}
-          <MKBox ml={{ xs: "auto", lg: 0 }}>
-            {action &&
-              (action.type === "internal" ? (
-                <MKButton
-                  component={Link}
-                  to={action.route}
-                  variant={
-                    action.color === "white" || action.color === "default"
-                      ? "contained"
-                      : "gradient"
-                  }
-                  color={action.color ? action.color : "info"}
-                  size="small"
-                >
-                  {action.label}
-                </MKButton>
-              ) : (
-                <MKButton
-                  component="a"
-                  href={action.route}
-                  target="_blank"
-                  rel="noreferrer"
-                  variant={
-                    action.color === "white" || action.color === "default"
-                      ? "contained"
-                      : "gradient"
-                  }
-                  color={action.color ? action.color : "info"}
-                  size="small"
-                >
-                  {action.label}
-                </MKButton>
-              ))}
-          </MKBox>
+          {/* LOGOUT */}
+          {localStorage.getItem("token") && (
+            <MKBox ml={{ xs: "auto", lg: 0 }}>
+              <MKButton
+                variant="text"
+                color="error"
+                onClick={() => {
+                  axios
+                    .post(`${url}/api/auth/logout`, {
+                      headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                      },
+                    })
+                    .then((res) => {
+                      console.log(res);
+                      localStorage.clear();
+                      window.location.href = "/sign-in";
+                    })
+                    .catch((err) => {
+                      console.log(err);
+                    });
+                }}
+              >
+                LogOut
+              </MKButton>
+            </MKBox>
+          )}
           {/* MOBILE MENU */}
           <MKBox
             display={{ xs: "inline-block", lg: "none" }}
@@ -571,6 +569,7 @@ DefaultNavbar.propTypes = {
         "light",
         "default",
         "white",
+        "grey",
       ]),
       label: PropTypes.string.isRequired,
     }),

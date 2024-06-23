@@ -8,6 +8,7 @@ import MKButton from "components/MKButton";
 
 import {
   XMarkIcon,
+  ArrowLongLeftIcon,
   MapPinIcon,
   BuildingOfficeIcon,
   ClockIcon,
@@ -18,27 +19,36 @@ import {
 import { convertSalaryRange, dateDifference } from "utils/functions";
 
 const JobDetail = (props) => {
-  const { selectedJob, setSelectedJob } = props;
+  const { selectedJob, setSelectedJob, isFull } = props;
   const navigate = useNavigate();
 
+  const cardStyle = isFull ? { width: "55%" } : { overflowY: "auto", maxHeight: "100vh" };
   return (
     <>
       {selectedJob.id ? (
-        <Card sx={{ overflowY: "auto", maxHeight: "100vh" }}>
+        <Card sx={cardStyle}>
           <MKBox px={7} py={4}>
-            <IconButton
-              onClick={() => setSelectedJob({})}
-              style={{ position: "absolute", right: 10, top: 10 }}
-            >
-              <SvgIcon component={XMarkIcon} />
-            </IconButton>
+            {!isFull ? (
+              <IconButton
+                onClick={() => setSelectedJob({})}
+                style={{ position: "absolute", right: 10, top: 10 }}
+              >
+                <SvgIcon component={XMarkIcon} />
+              </IconButton>
+            ) : (
+              <IconButton
+                onClick={() => navigate(-1)}
+                size="large"
+                style={{ position: "absolute", right: 25, top: 20 }}
+              >
+                <SvgIcon component={ArrowLongLeftIcon} />
+              </IconButton>
+            )}
             {selectedJob.img && (
               <img src={selectedJob.img} alt={selectedJob.title} style={{ maxHeight: "100px" }} />
             )}
             <MKTypography variant="h3">{selectedJob.title}</MKTypography>
-            <MKTypography variant="body2" sx={{ fontSize: "20px" }}>
-              {selectedJob.company}
-            </MKTypography>
+            <MKTypography variant="body1">{selectedJob.company}</MKTypography>
             <MKBox display="flex" alignItems="center" gap={1.5} mt={2}>
               <SvgIcon component={MapPinIcon} />
               <MKTypography variant="body2">{selectedJob.location}</MKTypography>
@@ -51,11 +61,11 @@ const JobDetail = (props) => {
               <SvgIcon component={BuildingOfficeIcon} />
               <MKTypography variant="body2">{selectedJob.mode}</MKTypography>
             </MKBox>
-            {selectedJob.salary && (
+            {selectedJob.minSalary && (
               <MKBox display="flex" alignItems="center" gap={1.5}>
                 <SvgIcon component={BanknotesIcon} />
                 <MKTypography variant="body2">
-                  {convertSalaryRange(selectedJob.salary)} per month
+                  {convertSalaryRange(selectedJob.minSalary, selectedJob.maxSalary)} per month
                 </MKTypography>
               </MKBox>
             )}
@@ -65,34 +75,58 @@ const JobDetail = (props) => {
             </MKBox>
             <MKBox display="flex" alignItems="center" gap={1.5} mt={2}>
               <MKTypography variant="body2" sx={{ fontWeight: 400, color: "grey" }}>
-                Posted {dateDifference(selectedJob.datePosted)}
+                Posted {dateDifference(selectedJob.createdAt)}
               </MKTypography>
             </MKBox>
-            {/* 80% center */}
-            <MKBox display="flex" justifyContent="center" mt={1} mb={3}>
-              <MKButton
-                variant="contained"
-                color="primary"
-                sx={{ width: "50%", marginTop: "5px" }}
-                size="large"
-                onClick={() =>
-                  navigate(`/apply-cv/${selectedJob.id}`, { state: { job: selectedJob } })
-                }
-              >
-                Apply
-              </MKButton>
-            </MKBox>
+            {!isFull && (
+              <MKBox display="flex" justifyContent="center" mt={1} mb={3}>
+                <MKButton
+                  variant="contained"
+                  color="primary"
+                  sx={{ width: "50%", marginTop: "5px" }}
+                  size="large"
+                  onClick={() => {
+                    const token = localStorage.getItem("token");
+                    if (token) {
+                      navigate(`/applicant/apply-cv/${selectedJob.id}`, {
+                        state: { job: selectedJob },
+                      });
+                    } else {
+                      navigate(`/sign-in`, {
+                        state: { next: `/applicant/apply-cv/${selectedJob.id}`, job: selectedJob },
+                      });
+                    }
+                  }}
+                >
+                  Apply
+                </MKButton>
+              </MKBox>
+            )}
             {selectedJob.description && (
               <MKBox mt={2} display="flex" flexDirection="column" gap={0.5}>
                 <MKTypography variant="h6">Job Description</MKTypography>
-                <MKTypography variant="body2">{selectedJob.description}</MKTypography>
+                <MKTypography variant="body2" pl={3}>
+                  {selectedJob.description}
+                </MKTypography>
               </MKBox>
             )}
             <MKBox mt={2} display="flex" flexDirection="column" gap={0.5}>
               <MKTypography variant="h6">Requirements</MKTypography>
               <MKTypography variant="body2" pl={3}>
-                {selectedJob.requirements.map((requirement) => (
-                  <li key={requirement}>{requirement}</li>
+                <li key="minYearExperience">
+                  Minimum{" "}
+                  <span style={{ fontWeight: "bold" }}>{selectedJob.minYearExperience} years</span>{" "}
+                  of experience in related field
+                </li>
+                <li key="majors">
+                  Avaliable for{" "}
+                  <span style={{ fontStyle: "italic", fontWeight: "bold" }}>
+                    {selectedJob.majors.join(", ").toLowerCase()}
+                  </span>{" "}
+                  majors
+                </li>
+                {selectedJob.requirements.map((requirement, index) => (
+                  <li key={index}>{requirement}</li>
                 ))}
               </MKTypography>
             </MKBox>
@@ -100,8 +134,8 @@ const JobDetail = (props) => {
               <MKBox mt={2} display="flex" flexDirection="column" gap={0.5}>
                 <MKTypography variant="h6">Responsibilities</MKTypography>
                 <MKTypography variant="body2" pl={3}>
-                  {selectedJob.responsibilities.map((responsibility) => (
-                    <li key={responsibility}>{responsibility}</li>
+                  {selectedJob.responsibilities.map((responsibility, index) => (
+                    <li key={index}>{responsibility}</li>
                   ))}
                 </MKTypography>
               </MKBox>
@@ -110,8 +144,8 @@ const JobDetail = (props) => {
               <MKBox mt={2} display="flex" flexDirection="column" gap={0.5}>
                 <MKTypography variant="h6">Advantages</MKTypography>
                 <MKTypography variant="body2" pl={3}>
-                  {selectedJob.advantages.map((advantage) => (
-                    <li key={advantage}>{advantage}</li>
+                  {selectedJob.advantages.map((advantage, index) => (
+                    <li key={index}>{advantage}</li>
                   ))}
                 </MKTypography>
               </MKBox>
@@ -119,7 +153,9 @@ const JobDetail = (props) => {
             {selectedJob.additionalInfo && (
               <MKBox mt={2} display="flex" flexDirection="column" gap={0.5}>
                 <MKTypography variant="h6">Additional Information</MKTypography>
-                <MKTypography variant="body2">{selectedJob.additionalInfo}</MKTypography>
+                <MKTypography variant="body2" pl={3}>
+                  {selectedJob.additionalInfo}
+                </MKTypography>
               </MKBox>
             )}
           </MKBox>
@@ -136,6 +172,11 @@ const JobDetail = (props) => {
 JobDetail.propTypes = {
   selectedJob: propTypes.object.isRequired,
   setSelectedJob: propTypes.func.isRequired,
+  isFull: propTypes.bool,
+};
+
+JobDetail.defaultProps = {
+  isFull: false,
 };
 
 export default JobDetail;

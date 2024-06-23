@@ -1,6 +1,7 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 import {
   Autocomplete,
@@ -22,14 +23,18 @@ import routes from "routes";
 
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 
 import EyeIcons from "@heroicons/react/24/solid/EyeIcon";
 import EyeSlashIcon from "@heroicons/react/24/solid/EyeSlashIcon";
 
-import { goAPI_cities } from "utils/enums/cities";
+import { cities } from "utils/enums/cities";
+import { convertResponseRole } from "utils/functions";
 
 function SignUpBasic({ role }) {
+  const navigate = useNavigate();
+  // eslint-disable-next-line no-undef
+  const url = process.env.REACT_APP_API_URL;
   const [showPassword, setShowPassword] = useState(false);
   const handleShowPassword = () => setShowPassword(!showPassword);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -45,26 +50,32 @@ function SignUpBasic({ role }) {
       submit: null,
     },
     validationSchema: Yup.object({
-      name: Yup.string().max(255).required("Name is required"),
+      name: Yup.string().required("Name is required"),
       email: Yup.string().email("Invalid email address").required("Email is required"),
-      location: Yup.string().max(255).required("Location is required"),
-      password: Yup.string().max(255).required("Password is required"),
+      location: Yup.string().required("Location is required"),
+      password: Yup.string().required("Password is required"),
       confirmPassword: Yup.string()
         .oneOf([Yup.ref("password"), null], "Passwords must match")
         .required("Confirm password is required"),
     }),
     onSubmit: async (values, helpers) => {
-      try {
-        // TODO : add login logic here
-        // ADD ROLE TO THE VALUES
-        console.log({ ...values, role });
-        toast.success("Register success");
-      } catch (err) {
-        helpers.setStatus({ success: false });
-        helpers.setErrors({ submit: err.message });
-        helpers.setSubmitting(false);
-        toast.error("Register failed");
-      }
+      axios
+        .post(`${url}/api/auth/register`, { ...values, role })
+        .then((res) => {
+          localStorage.setItem("token", res.data.token);
+          localStorage.setItem("name", values.name);
+          localStorage.setItem("email", values.email);
+          localStorage.setItem("role", role);
+          toast.success("Register success");
+          navigate(`/${convertResponseRole(res.data.role)}/home`);
+        })
+        .catch((err) => {
+          console.log(err);
+          helpers.setStatus({ success: false });
+          helpers.setErrors({ submit: err.response.data.error });
+          helpers.setSubmitting(false);
+          toast.error("Register failed");
+        });
     },
   });
 
@@ -73,14 +84,15 @@ function SignUpBasic({ role }) {
       <MKBox bgColor="white" shadow="sm">
         <DefaultNavbar routes={routes} sticky relative transparent />
       </MKBox>
+      <ToastContainer />
       <MKBox
+        mt={3.5}
         px={1}
         width="100%"
-        height="calc(100vh - 60px)"
         mx="auto"
         position="relative"
         zIndex={2}
-        sx={{ maxWidth: "1720px" }}
+        sx={{ maxWidth: "1720px", minHeight: "calc(100vh - 88.5px)" }}
       >
         <Grid
           container
@@ -130,15 +142,15 @@ function SignUpBasic({ role }) {
                   <MKBox mb={2.5}>
                     <Autocomplete
                       id="location"
-                      options={goAPI_cities}
-                      getOptionLabel={(option) => option.name}
+                      options={cities}
+                      getOptionLabel={(option) => option}
                       style={{ width: "100%" }}
                       autoHighlight
                       autoSelect
                       autoComplete
                       onChange={(_, newValue) => {
                         newValue
-                          ? formik.setFieldValue("location", newValue.name)
+                          ? formik.setFieldValue("location", newValue)
                           : formik.setFieldValue("location", "");
                       }}
                       renderInput={(params) => (
@@ -149,9 +161,7 @@ function SignUpBasic({ role }) {
                           label="Location (City or Regency)"
                           fullWidth
                           value={formik.values.location}
-                          onBlur={formik.handleBlur}
                           error={!!(formik.touched.location && formik.errors.location)}
-                          success={formik.touched.location && !formik.errors.location}
                           helperText={formik.touched.location && formik.errors.location}
                         />
                       )}
@@ -243,7 +253,7 @@ function SignUpBasic({ role }) {
                       Are you a recruiter?{" "}
                       <MKTypography
                         component={Link}
-                        to={role === "RECRUITER" ? "/sign-up-applicant" : "/sign-up-company"}
+                        to={role === "RECRUITER" ? "/applicant/sign-up" : "/company/sign-up"}
                         variant="button"
                         color="info"
                         fontWeight="medium"

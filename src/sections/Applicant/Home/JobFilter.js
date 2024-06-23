@@ -19,7 +19,7 @@ import MKButton from "components/MKButton";
 const JobFilter = (props) => {
   const typeOptions = ["Internship", "Full-time", "Part-time", "Contract"];
   const modeOptions = ["Remote", "Hybrid", "On-site"];
-  const datePostedOptions = [
+  const createdAtOptions = [
     "Any time",
     "Last 24 hours",
     "Last 3 days",
@@ -37,6 +37,8 @@ const JobFilter = (props) => {
   ];
 
   const handleSearch = () => {
+    console.log(localStorage.getItem("email"));
+    console.log(localStorage.getItem("role"));
     console.log("Search");
   };
 
@@ -83,15 +85,15 @@ const JobFilter = (props) => {
             <Select
               labelId="date-posted"
               label="Date Posted"
-              name="datePosted"
+              name="createdAt"
               onChange={(event) => {
-                props.setDatePosted(event.target.value);
+                props.setCreatedAt(event.target.value);
               }}
-              value={props.datePosted}
+              value={props.createdAt}
             >
-              {datePostedOptions.map((datePosted) => (
-                <MenuItem key={datePosted} value={datePosted}>
-                  {datePosted}
+              {createdAtOptions.map((createdAt) => (
+                <MenuItem key={createdAt} value={createdAt}>
+                  {createdAt}
                 </MenuItem>
               ))}
             </Select>
@@ -189,8 +191,8 @@ JobFilter.propTypes = {
   setType: propTypes.func,
   mode: propTypes.arrayOf(propTypes.string),
   setMode: propTypes.func,
-  datePosted: propTypes.string,
-  setDatePosted: propTypes.func,
+  createdAt: propTypes.string,
+  setCreatedAt: propTypes.func,
   experienceLevel: propTypes.arrayOf(propTypes.string),
   setExperienceLevel: propTypes.func,
 };

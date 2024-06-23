@@ -2,15 +2,10 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 // react-router-dom components
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 // @mui material components
-import Card from "@mui/material/Card";
-import Switch from "@mui/material/Switch";
-import Grid from "@mui/material/Grid";
-import InputAdornment from "@mui/material/InputAdornment";
-import IconButton from "@mui/material/IconButton";
-import SvgIcon from "@mui/material/SvgIcon";
+import { Card, Switch, Grid, InputAdornment, IconButton, SvgIcon } from "@mui/material";
 
 // Material Kit 2 React components
 import MKBox from "components/MKBox";
@@ -23,6 +18,7 @@ import DefaultNavbar from "examples/Navbars/DefaultNavbar";
 
 // Material Kit 2 React page layout routes
 import routes from "routes";
+import { convertResponseRole } from "utils/functions";
 
 // other packages
 import { useFormik } from "formik";
@@ -31,10 +27,11 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 // icons
-import EyeIcons from "@heroicons/react/24/solid/EyeIcon";
-import EyeSlashIcon from "@heroicons/react/24/solid/EyeSlashIcon";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
 
-function SignInBasic() {
+export default function SignInBasic() {
+  const navigate = useNavigate();
+  const location = useLocation();
   // eslint-disable-next-line no-undef
   const url = process.env.REACT_APP_API_URL;
   const [rememberMe, setRememberMe] = useState(false);
@@ -58,13 +55,30 @@ function SignInBasic() {
         .post(`${url}/api/auth/login`, values)
         .then((res) => {
           localStorage.setItem("token", res.data.token);
-          toast.success("Login success");
-          window.location.href = "/";
+          axios
+            .get(`${url}/api/user/get`, {
+              headers: {
+                Authorization: `Bearer ${res.data.token}`,
+              },
+            })
+            .then((res) => {
+              localStorage.setItem("name", res.data.name);
+              localStorage.setItem("email", res.data.email);
+              localStorage.setItem("role", res.data.role);
+              toast.success("Login success");
+              if (location.state?.next) {
+                navigate(location.state.next, { state: { job: location.state.job } });
+              } else {
+                navigate(`/${convertResponseRole(res.data.role)}/home`);
+              }
+            })
+            .catch((err) => {
+              console.log(err);
+            });
         })
         .catch((err) => {
-          console.log(err);
           helpers.setStatus({ success: false });
-          helpers.setErrors({ submit: err.message });
+          helpers.setErrors({ submit: err.response.data.error });
           helpers.setSubmitting(false);
           toast.error("Login failed");
         });
@@ -134,7 +148,7 @@ function SignInBasic() {
                           <InputAdornment position="end">
                             <IconButton onClick={handleShowPassword} edge="end">
                               <SvgIcon color="action" fontSize="small">
-                                {showPassword ? <EyeSlashIcon /> : <EyeIcons />}
+                                {showPassword ? <EyeSlashIcon /> : <EyeIcon />}
                               </SvgIcon>
                             </IconButton>
                           </InputAdornment>
@@ -175,7 +189,7 @@ function SignInBasic() {
                       Don&apos;t have an account?{" "}
                       <MKTypography
                         component={Link}
-                        to="/sign-up-applicant"
+                        to="/applicant/sign-up"
                         variant="button"
                         color="info"
                         fontWeight="medium"
@@ -194,5 +208,3 @@ function SignInBasic() {
     </MKBox>
   );
 }
-
-export default SignInBasic;
