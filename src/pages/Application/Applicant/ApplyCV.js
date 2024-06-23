@@ -47,9 +47,6 @@ const ApplyCV = () => {
       console.log("selectedCVId", selectedCVId);
       console.log("newCV", newCV);
       // setIsApplied(!isApplied);
-      // console.log(selectedCVId);
-      // console.log(jobId);
-      // console.log(values);
     },
   });
 
@@ -62,7 +59,7 @@ const ApplyCV = () => {
       })
       .then((response) => {
         setRecentCV(response.data.files);
-        setSelectedCVId(newId || response.data.files[0].id);
+        newId ? setSelectedCVId(newId) : setSelectedCVId(response.data.files[0].id);
       })
       .catch((error) => {
         console.log(error);
@@ -82,9 +79,8 @@ const ApplyCV = () => {
         },
       })
       .then((response) => {
-        console.log(response.data);
-        // tambahin id dari response
-        getRecentCVs();
+        console.log("uploaded cv", response.data);
+        getRecentCVs(response.data.id);
       })
       .catch((error) => {
         console.log(error);
@@ -93,32 +89,15 @@ const ApplyCV = () => {
 
   const viewCV = (id) => {
     axios
-      .get(`${url}/api/file/cv/view/${id}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      })
-      .then((response) => {
-        console.log(response.data);
-        const blob = new Blob([response.data], { type: "application/pdf" });
-        const url = URL.createObjectURL(blob);
-        // use iframe tag
-        window.open(url, "_blank");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const downloadCV = (id) => {
-    axios
       .get(`${url}/api/file/cv/get/${id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
+        responseType: "blob",
       })
       .then((response) => {
-        window.open(response.data.data, "_blank");
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        window.open(url);
       })
       .catch((error) => {
         console.log(error);
@@ -190,6 +169,7 @@ const ApplyCV = () => {
               style={{ display: "none" }}
               onChange={(e) => {
                 const file = e.target.files[0];
+                // console.log("uploaded", file);
                 uploadCV(file);
                 // setRecentCV((prev) => {
                 //   const defaultCV = prev[0];
