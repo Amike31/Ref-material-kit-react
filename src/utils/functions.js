@@ -53,7 +53,7 @@ function dateDifference(timestamp) {
   return `${yearsDifference} years ago`;
 }
 
-function convertResponseRole(role) {
+function convertRole(role) {
   switch (role) {
     case "CANDIDATE":
       return "applicant";
@@ -73,11 +73,11 @@ function convertFe2BeJob(values) {
       salary: [Number(values.minSalary), Number(values.maxSalary)],
       advantages: values.advantages,
       additionalInfo: values.additionalInfo,
+      mode: values.mode,
+      type: values.type,
+      experienceLevel: values.experienceLevel,
     }),
     skills: [
-      values.mode,
-      values.type,
-      values.experienceLevel,
       "requirements",
       ...values.requirements,
       "responsibilities",
@@ -88,33 +88,32 @@ function convertFe2BeJob(values) {
   };
 }
 
-function convertBe2FeJob(responseData) {
-  const responseDescription = JSON.parse(responseData.description);
-  const responseSkills = responseData.skills
+function convertBe2FeJob(resData) {
+  const resDescription = JSON.parse(resData.description);
+  const resSkills = resData.skills
     ? {
-        mode: responseData.skills[0],
-        type: responseData.skills[1],
-        experienceLevel: responseData.skills[2],
-        requirements: responseData.skills.slice(4, responseData.skills.indexOf("responsibilities")),
-        responsibilities: responseData.skills.slice(
-          responseData.skills.indexOf("responsibilities") + 1
-        ),
+        requirements: resData.skills.slice(0, resData.skills.indexOf("responsibilities")),
+        responsibilities: resData.skills.slice(resData.skills.indexOf("responsibilities") + 1),
       }
     : {};
   return {
-    id: responseData.id,
-    title: responseData.title,
-    company: responseData.company,
-    description: responseDescription.description,
-    location: responseDescription.location,
-    minSalary: responseDescription.salary[0], // must be number
-    maxSalary: responseDescription.salary[1], // must be number
-    advantages: responseDescription.advantages,
-    additionalInfo: responseDescription.additionalInfo,
-    ...responseSkills,
-    majors: responseData.majors || null,
-    minYearExperience: responseData.years_of_experience || null,
-    createdAt: responseData.createdAt,
+    id: resData.id,
+    title: resData.title,
+    company: resData.company,
+    description: resDescription.description,
+    location: resDescription.location,
+    minSalary: resDescription.salary[0], // must be number
+    maxSalary: resDescription.salary[1], // must be number
+    advantages: resDescription.advantages,
+    additionalInfo: resDescription.additionalInfo,
+    mode: resDescription.mode,
+    type: resDescription.type,
+    experienceLevel: resDescription.experienceLevel,
+    ...resSkills,
+    majors: resData.majors || null,
+    minYearExperience: resData.years_of_experience || null,
+    createdAt: resData.createdAt,
+    applied: resData.applied,
   };
 }
 
@@ -129,7 +128,7 @@ export {
   convertDateString,
   convertFullDateString,
   dateDifference,
-  convertResponseRole,
+  convertRole,
   convertFe2BeJob,
   convertBe2FeJob,
   convertFloatToHundredBase,

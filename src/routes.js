@@ -24,10 +24,6 @@
 // @mui material components
 import Icon from "@mui/material/Icon";
 
-// Pages
-import AboutUs from "layouts/pages/landing-pages/about-us";
-import ContactUs from "layouts/pages/landing-pages/contact-us";
-import Author from "layouts/pages/landing-pages/author";
 import SignIn from "pages/Authentication/SignIn";
 
 import SignUpApplicant from "pages/Authentication/SignUp/Applicant";
@@ -38,17 +34,6 @@ import SignUpCompany from "pages/Authentication/SignUp/Company";
 import HomeCompany from "pages/Home/Company";
 import AddJob from "pages/Home/Company/AddJob";
 
-// Sections
-import PageHeaders from "layouts/sections/page-sections/page-headers";
-import Features from "layouts/sections/page-sections/featuers";
-import Navbars from "layouts/sections/navigation/navbars";
-import NavTabs from "layouts/sections/navigation/nav-tabs";
-import Pagination from "layouts/sections/navigation/pagination";
-import Inputs from "layouts/sections/input-areas/inputs";
-import Forms from "layouts/sections/input-areas/forms";
-import Alerts from "layouts/sections/attention-catchers/alerts";
-import Modals from "layouts/sections/attention-catchers/modals";
-import TooltipsPopovers from "layouts/sections/attention-catchers/tooltips-popovers";
 import Avatars from "layouts/sections/elements/avatars";
 import Badges from "layouts/sections/elements/badges";
 import BreadcrumbsEl from "layouts/sections/elements/breadcrumbs";
@@ -125,67 +110,67 @@ const routes = [
       },
     ],
   },
-  // {
-  //   name: "sections",
-  //   icon: <Icon>view_day</Icon>,
-  //   collapse: [
-  //     {
-  //       name: "elements",
-  //       description: "See all 32 examples",
-  //       dropdown: true,
-  //       collapse: [
-  //         {
-  //           name: "avatars",
-  //           route: "/sections/elements/avatars",
-  //           component: <Avatars />,
-  //           for: "all",
-  //         },
-  //         {
-  //           name: "badges",
-  //           route: "/sections/elements/badges",
-  //           component: <Badges />,
-  //           for: "all",
-  //         },
-  //         {
-  //           name: "breadcrumbs",
-  //           route: "/sections/elements/breadcrumbs",
-  //           component: <BreadcrumbsEl />,
-  //           for: "all",
-  //         },
-  //         {
-  //           name: "buttons",
-  //           route: "/sections/elements/buttons",
-  //           component: <Buttons />,
-  //           for: "all",
-  //         },
-  //         {
-  //           name: "dropdowns",
-  //           route: "/sections/elements/dropdowns",
-  //           component: <Dropdowns />,
-  //           for: "all",
-  //         },
-  //         {
-  //           name: "progress bars",
-  //           route: "/sections/elements/progress-bars",
-  //           component: <ProgressBars />,
-  //           for: "all",
-  //         },
-  //         {
-  //           name: "toggles",
-  //           route: "/sections/elements/toggles",
-  //           component: <Toggles />,
-  //           for: "all",
-  //         },
-  //         {
-  //           name: "typography",
-  //           route: "/sections/elements/typography",
-  //           component: <Typography />,
-  //           for: "all",
-  //         },
-  //       ],
-  //     },
-  //   ],
-  // },
+  {
+    name: "sections",
+    icon: <Icon>view_day</Icon>,
+    collapse: [
+      {
+        name: "elements",
+        description: "See all 32 examples",
+        dropdown: true,
+        collapse: [
+          {
+            name: "avatars",
+            route: "/sections/elements/avatars",
+            component: <Avatars />,
+            for: "all",
+          },
+          {
+            name: "badges",
+            route: "/sections/elements/badges",
+            component: <Badges />,
+            for: "all",
+          },
+          {
+            name: "breadcrumbs",
+            route: "/sections/elements/breadcrumbs",
+            component: <BreadcrumbsEl />,
+            for: "all",
+          },
+          {
+            name: "buttons",
+            route: "/sections/elements/buttons",
+            component: <Buttons />,
+            for: "all",
+          },
+          {
+            name: "dropdowns",
+            route: "/sections/elements/dropdowns",
+            component: <Dropdowns />,
+            for: "all",
+          },
+          {
+            name: "progress bars",
+            route: "/sections/elements/progress-bars",
+            component: <ProgressBars />,
+            for: "all",
+          },
+          {
+            name: "toggles",
+            route: "/sections/elements/toggles",
+            component: <Toggles />,
+            for: "all",
+          },
+          {
+            name: "typography",
+            route: "/sections/elements/typography",
+            component: <Typography />,
+            for: "all",
+          },
+        ],
+      },
+    ],
+  },
 ];
 
 export default routes;

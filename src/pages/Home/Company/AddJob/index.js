@@ -1,5 +1,4 @@
 import axios from "axios";
-import { useState, useEffect } from "react";
 
 import {
   Container,
@@ -30,28 +29,25 @@ import RadioInput from "atoms/RadioInput";
 import { majors } from "utils/enums/majors";
 import { cities } from "utils/enums/cities";
 import { modes, types, experienceLevels } from "utils/enums/options";
-import { convertFe2BeJob, convertBe2FeJob } from "utils/functions";
+import { convertFe2BeJob } from "utils/functions";
 
 function AddJob() {
   // eslint-disable-next-line no-undef
   const url = process.env.REACT_APP_API_URL;
   const initialValues = {
-    // core information
     title: "",
     location: "",
-    type: "", // ["Internship", "Full-time", "Part-time", "Contract"];
-    mode: "", // ["Remote", "Hybrid", "On-site"];
-    experienceLevel: "", // ["Internship", "Junior Level", "Associate", "Mid Level", "Senior Level", "Lead Level"]
-    minSalary: "", // integer monthly
-    maxSalary: "", // integer monthly
-    // needed information
+    type: "",
+    mode: "",
+    experienceLevel: "",
+    minSalary: "",
+    maxSalary: "",
     minYearExperience: "",
-    majors: [], // array string of majors enum
-    requirements: [""], // array string
-    responsibilities: [], // array string
-    // for candidate information
+    majors: [],
+    requirements: [""],
+    responsibilities: [],
     description: "",
-    advantages: [], // array string
+    advantages: [],
     additionalInfo: "",
   };
 

@@ -32,8 +32,8 @@ function DetailVacancy() {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       })
-      .then((response) => {
-        setJob(convertBe2FeJob(response.data));
+      .then((res) => {
+        setJob(convertBe2FeJob(res.data));
       })
       .catch((error) => {
         console.log(error);

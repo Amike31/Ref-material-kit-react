@@ -8,13 +8,17 @@ import PropTypes from "prop-types";
 import axios from "axios";
 
 // @mui material components
-import Container from "@mui/material/Container";
-import Icon from "@mui/material/Icon";
-import Popper from "@mui/material/Popper";
-import Grow from "@mui/material/Grow";
-import Grid from "@mui/material/Grid";
-import Divider from "@mui/material/Divider";
-import MuiLink from "@mui/material/Link";
+import {
+  IconButton,
+  SvgIcon,
+  Container,
+  Icon,
+  Popper,
+  Grow,
+  Grid,
+  Divider,
+  Link as MuiLink,
+} from "@mui/material";
 
 // Material Kit 2 React components
 import MKBox from "components/MKBox";
@@ -28,10 +32,9 @@ import DefaultNavbarMobile from "examples/Navbars/DefaultNavbar/DefaultNavbarMob
 // Material Kit 2 React base styles
 import breakpoints from "assets/theme/base/breakpoints";
 
-// heroicons
-import { XMarkIcon } from "@heroicons/react/24/solid";
+import { UserCircleIcon } from "@heroicons/react/24/solid";
 
-function DefaultNavbar({ brand, routes, transparent, light, action, sticky, relative, center }) {
+function DefaultNavbar({ brand, routes, transparent, light, sticky, relative, center }) {
   // eslint-disable-next-line no-undef
   const url = process.env.REACT_APP_API_URL;
   const [dropdown, setDropdown] = useState("");
@@ -43,6 +46,7 @@ function DefaultNavbar({ brand, routes, transparent, light, action, sticky, rela
   const [arrowRef, setArrowRef] = useState(null);
   const [mobileNavbar, setMobileNavbar] = useState(false);
   const [mobileView, setMobileView] = useState(false);
+  const [profileDropdown, setProfileDropdown] = useState("");
 
   const openMobileNavbar = () => setMobileNavbar(!mobileNavbar);
 
@@ -507,6 +511,46 @@ function DefaultNavbar({ brand, routes, transparent, light, action, sticky, rela
               </MKButton>
             </MKBox>
           )}
+          {/* USER */}
+          {/* when hover the UserCicleIcon, display it names in Popper for 3s */}
+          <MKBox
+            display={{ xs: "none", lg: "flex" }}
+            ml={2}
+            sx={{ cursor: "pointer" }}
+            onMouseEnter={(currentTarget) => setProfileDropdown(currentTarget)}
+            onMouseLeave={() => setProfileDropdown(null)}
+          >
+            <IconButton>
+              <SvgIcon>
+                <UserCircleIcon />
+              </SvgIcon>
+            </IconButton>
+            <Popper
+              open={Boolean(profileDropdown)}
+              anchorEl={profileDropdown}
+              placement="left-start"
+              transition
+              style={{ zIndex: 10 }}
+              onMouseEnter={() => setProfileDropdown(profileDropdown)}
+              onMouseLeave={() => setProfileDropdown(null)}
+            >
+              {({ TransitionProps }) => (
+                <Grow
+                  {...TransitionProps}
+                  sx={{
+                    transformOrigin: "left top",
+                    background: ({ palette: { white } }) => white.main,
+                  }}
+                >
+                  <MKBox borderRadius="lg" p={2} mt={2}>
+                    <MKTypography variant="button" color="dark" fontWeight="bold">
+                      {localStorage.getItem("name")}
+                    </MKTypography>
+                  </MKBox>
+                </Grow>
+              )}
+            </Popper>
+          </MKBox>
           {/* MOBILE MENU */}
           <MKBox
             display={{ xs: "inline-block", lg: "none" }}
@@ -553,27 +597,6 @@ DefaultNavbar.propTypes = {
   routes: PropTypes.arrayOf(PropTypes.shape).isRequired,
   transparent: PropTypes.bool,
   light: PropTypes.bool,
-  action: PropTypes.oneOfType([
-    PropTypes.bool,
-    PropTypes.shape({
-      type: PropTypes.oneOf(["external", "internal"]).isRequired,
-      route: PropTypes.string.isRequired,
-      color: PropTypes.oneOf([
-        "primary",
-        "secondary",
-        "info",
-        "success",
-        "warning",
-        "error",
-        "dark",
-        "light",
-        "default",
-        "white",
-        "grey",
-      ]),
-      label: PropTypes.string.isRequired,
-    }),
-  ]),
   sticky: PropTypes.bool,
   relative: PropTypes.bool,
   center: PropTypes.bool,

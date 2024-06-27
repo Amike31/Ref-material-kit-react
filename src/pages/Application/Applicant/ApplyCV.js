@@ -1,12 +1,13 @@
 import axios from "axios";
-import { useState, useRef, useEffect } from "react";
-import { useParams, useLocation } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { useLocation, useParams } from "react-router-dom";
+import { keyframes } from "@emotion/react";
 
-import { Container, Grid, Box, TextField, Button, Input, Autocomplete, Stack } from "@mui/material";
+import { Container, Input, Stack, SvgIcon } from "@mui/material";
 import MKBox from "components/MKBox";
-import MKTypography from "components/MKTypography";
 import MKButton from "components/MKButton";
 import MKInput from "components/MKInput";
+import MKTypography from "components/MKTypography";
 
 import DefaultNavbar from "examples/Navbars/DefaultNavbar";
 import routes from "routes";
@@ -15,8 +16,19 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 
 import { convertFullDateString } from "utils/functions";
-import { cities } from "utils/enums/cities";
-import { recent } from "dummy";
+
+import AddableForm from "atoms/AddableForm";
+
+import { ArrowPathIcon } from "@heroicons/react/24/solid";
+
+const spin = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+`;
 
 const ApplyCV = () => {
   // eslint-disable-next-line no-undef
@@ -28,27 +40,86 @@ const ApplyCV = () => {
 
   const [recentCV, setRecentCV] = useState([]);
   const [selectedCVId, setSelectedCVId] = useState(null);
-  const [newCV, setNewCV] = useState(null);
-  const [onEdit, setOnEdit] = useState(false);
-  const [isApplied, setIsApplied] = useState(false);
+  const [onExtract, setOnExtract] = useState(true);
+  const [onEdit, setOnEdit] = useState(true);
+  const [onEditIndex, setOnEditIndex] = useState([]);
+
+  const [skills, setSkills] = useState([]);
+  const [experiences, setExperiences] = useState([]);
+  const [educations, setEducations] = useState([]);
   const formik = useFormik({
     initialValues: {
       name: localStorage.getItem("name"),
       email: localStorage.getItem("email"),
-      location: localStorage.getItem("location") || "",
+      // experiences: [
+      //   { start: null, end: null, designation: "", company: "", experience_description: "" },
+      // ],
+      // educations: [{ start: null, end: null, major: "", campus: "", GPA: 0 }],
     },
     validationSchema: Yup.object({
       name: Yup.string().required("Name is required"),
       email: Yup.string().email("Invalid email address").required("Email is required"),
-      location: Yup.string().required("Location is required"),
     }),
     onSubmit: (values) => {
-      console.log("recentCV", recentCV);
-      console.log("selectedCVId", selectedCVId);
-      console.log("newCV", newCV);
-      // setIsApplied(!isApplied);
+      const experience = {
+        educations: educations,
+        experiences: experiences,
+        skills: skills,
+      };
+      const data = {
+        job_id: jobId,
+        cv_id: selectedCVId,
+        experience: experience,
+      };
+      console.log("Submit", data);
+      axios
+        .post(`${url}/api/job/apply`, data, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        })
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
   });
+
+  const selectCV = (id) => {
+    if (selectedCVId === id) return;
+    setOnEdit(true);
+    setOnExtract(true);
+    setSelectedCVId(id);
+    axios
+      .post(
+        `${url}/api/file/cv/extract`,
+        {
+          id: id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      )
+      .then((res) => {
+        setExperiences(
+          res.data.experiences.map((e) => ({
+            ...e,
+            description: e.experience_description,
+            position: e.designation,
+          }))
+        );
+        setEducations(res.data.educations.map((e) => ({ GPA: e.GPA, major: e.major })));
+        setSkills(res.data.skills);
+        setOnExtract(false);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   const getRecentCVs = (newId) => {
     axios
@@ -57,9 +128,9 @@ const ApplyCV = () => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       })
-      .then((response) => {
-        setRecentCV(response.data.files);
-        newId ? setSelectedCVId(newId) : setSelectedCVId(response.data.files[0].id);
+      .then((res) => {
+        setRecentCV(res.data.files);
+        newId ? selectCV(newId) : selectCV(res.data.files[0].id);
       })
       .catch((error) => {
         console.log(error);
@@ -68,19 +139,16 @@ const ApplyCV = () => {
 
   const uploadCV = (file) => {
     if (!file) return;
-    setNewCV(file);
     const formData = new FormData();
     formData.append("file", file);
     axios
       .post(`${url}/api/file/cv/upload`, formData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
-          "Content-Type": "multipart/form-data",
         },
       })
-      .then((response) => {
-        console.log("uploaded cv", response.data);
-        getRecentCVs(response.data.id);
+      .then((res) => {
+        getRecentCVs(res.data.id);
       })
       .catch((error) => {
         console.log(error);
@@ -93,11 +161,9 @@ const ApplyCV = () => {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        responseType: "blob",
       })
-      .then((response) => {
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        window.open(url);
+      .then((res) => {
+        window.open(res.data.data);
       })
       .catch((error) => {
         console.log(error);
@@ -105,6 +171,8 @@ const ApplyCV = () => {
   };
 
   useEffect(() => {
+    console.log("job", job);
+    console.log("job applied", job.applied);
     getRecentCVs();
   }, []);
 
@@ -112,7 +180,7 @@ const ApplyCV = () => {
     <Container>
       <DefaultNavbar routes={routes} relative transparent />
 
-      {!isApplied ? (
+      {!job.applied ? (
         <MKBox width="85%" mx="auto" mt={3} display="flex" flexDirection="column" gap={3}>
           {/* job short detail */}
           <MKBox
@@ -147,7 +215,9 @@ const ApplyCV = () => {
               </MKTypography>
               <MKTypography variant="h3">{job.title}</MKTypography>
               <MKTypography variant="body2">{job.company}</MKTypography>
-              <MKTypography variant="body2">{job.location}</MKTypography>
+              <MKTypography variant="body2" sx={{ fontWeight: "bold" }}>
+                {job.location}
+              </MKTypography>
             </MKBox>
           </MKBox>
           {/* upload CV button with 3 button of recent CV */}
@@ -169,18 +239,7 @@ const ApplyCV = () => {
               style={{ display: "none" }}
               onChange={(e) => {
                 const file = e.target.files[0];
-                // console.log("uploaded", file);
                 uploadCV(file);
-                // setRecentCV((prev) => {
-                //   const defaultCV = prev[0];
-                //   const newRecent = prev.slice(1, 3);
-                //   return [
-                //     defaultCV,
-                //     { name: file.name, file: URL.createObjectURL(file) },
-                //     ...newRecent,
-                //   ];
-                // });
-                // setSelectedCVId({ name: file.name, file: URL.createObjectURL(file) });
               }}
             />
             <MKTypography variant="body1" sx={{ color: "black" }}>
@@ -200,7 +259,8 @@ const ApplyCV = () => {
                       variant="outlined"
                       color="info"
                       sx={{ gap: 2, width: "83%" }}
-                      onClick={() => setSelectedCVId(cv.id)}
+                      onClick={() => selectCV(cv.id)}
+                      disabled={onExtract}
                     >
                       {/* Red box with full height and full width consist white Typografy "PDF" */}
                       <MKBox
@@ -269,87 +329,98 @@ const ApplyCV = () => {
           </MKBox>
           {/* user profile Checking */}
           <MKBox bgColor="white" px={4.5} pt={3} pb={4} sx={{ borderRadius: "20px" }}>
-            <MKBox display="flex" flexDirection="column" gap={2} width="80%">
-              <MKTypography variant="body1" sx={{ color: "black" }}>
-                Profile Checking
-                {/* code new line */}
-                <br />
-                <span style={{ color: "grey", fontSize: "15px" }}>
-                  (you can edit your profile information below)
-                </span>
-              </MKTypography>
-              <MKInput
-                label="Full Name"
-                variant="outlined"
-                fullWidth
-                type="text"
-                disabled={!onEdit}
-                {...formik.getFieldProps("name")}
-                error={formik.touched.name && Boolean(formik.errors.name)}
-                helperText={formik.touched.name && formik.errors.name}
-              />
-              {/* email only show and cannot be change */}
-              <MKInput
-                label="Email"
-                variant="outlined"
-                {...formik.getFieldProps("email")}
-                fullWidth
-                disabled
-              />
-              <Autocomplete
-                options={cities}
-                getOptionLabel={(option) => option}
-                autoHighlight
-                autoSelect
-                autoComplete
-                disableClearable
-                disabled={!onEdit}
-                onChange={(_, value) => {
-                  value
-                    ? formik.setFieldValue("location", value)
-                    : formik.setFieldValue("location", "");
-                }}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Location (City or Regency)"
+            {!onExtract ? (
+              <MKBox display="flex" flexDirection="column" gap={2}>
+                <MKTypography variant="body1" sx={{ color: "black", fontWeight: "bold" }}>
+                  Profile Checking
+                </MKTypography>
+                <MKBox display="flex" flexDirection="row" gap={2} width="80%" pl={2}>
+                  <MKInput
+                    label="Full Name"
                     variant="outlined"
-                    fullWidth
-                    value={formik.values.location}
-                    error={formik.touched.location && Boolean(formik.errors.location)}
-                    helperText={formik.touched.location && formik.errors.location}
+                    sx={{ width: "50%" }}
+                    type="text"
+                    disabled
+                    {...formik.getFieldProps("name")}
+                    error={formik.touched.name && Boolean(formik.errors.name)}
+                    helperText={formik.touched.name && formik.errors.name}
                   />
-                )}
-              />
-              <MKBox display="flex" justifyContent="flex-start" mr={2} gap={2}>
-                <MKButton
-                  variant="text"
-                  color="info"
-                  size="large"
-                  sx={{ width: "17%" }}
-                  disabled={onEdit}
-                  onClick={() => setOnEdit(!onEdit)}
-                >
-                  Edit Profile
-                </MKButton>
-                <MKButton
-                  variant="text"
-                  color="success"
-                  size="large"
-                  sx={{ width: "17%" }}
-                  disabled={!onEdit}
-                  onClick={() => setOnEdit(false)}
-                >
-                  Save Profile
-                </MKButton>
+                  {/* email only show and cannot be change */}
+                  <MKInput
+                    label="Email"
+                    variant="outlined"
+                    {...formik.getFieldProps("email")}
+                    sx={{ width: "50%" }}
+                    disabled
+                  />
+                </MKBox>
+                <MKBox display="flex" flexDirection="column" gap={0}>
+                  <MKTypography style={{ color: "grey", fontSize: "15px" }}>
+                    (Please add experiences start date and end date)
+                  </MKTypography>
+                  <AddableForm
+                    data={experiences}
+                    setData={setExperiences}
+                    label="Experience"
+                    name="experiences"
+                    onEdit={onEdit}
+                    onEditIndex={onEditIndex}
+                    setOnEditIndex={setOnEditIndex}
+                  />
+                  <MKTypography style={{ color: "grey", fontSize: "14.2px", padding: "0 30px" }}>
+                    {onEdit
+                      ? "(Please save each experience before confirm edit)"
+                      : "(Please edit to add or remove experience)"}
+                  </MKTypography>
+                </MKBox>
+                <MKBox display="flex" justifyContent="flex-start" mr={2} gap={2}>
+                  <MKButton
+                    variant="text"
+                    color="info"
+                    size="large"
+                    sx={{ width: "17%" }}
+                    disabled={onEdit}
+                    onClick={() => setOnEdit(true)}
+                  >
+                    Edit Data
+                  </MKButton>
+                  <MKButton
+                    variant="text"
+                    color="success"
+                    size="large"
+                    sx={{ width: "20%" }}
+                    disabled={!onEdit || (onEdit && onEditIndex.length > 0)}
+                    onClick={() => setOnEdit(false)}
+                  >
+                    Confirm Edit
+                  </MKButton>
+                </MKBox>
               </MKBox>
-            </MKBox>
+            ) : (
+              <MKBox display="flex" flexDirection="column" gap={2} alignItems="center">
+                <MKTypography variant="body1" sx={{ color: "black", fontWeight: "bold" }}>
+                  Extracting your CV data
+                </MKTypography>
+                <MKTypography variant="body2" sx={{ color: "grey" }}>
+                  Please wait while we extract your CV data
+                </MKTypography>
+                <SvgIcon
+                  component={ArrowPathIcon}
+                  py={3}
+                  sx={{
+                    width: 100,
+                    height: 100,
+                    color: "grey",
+                    animation: `${spin} 3s linear infinite`,
+                  }}
+                />
+              </MKBox>
+            )}
           </MKBox>
           {/* submit button */}
           <MKBox
-            display="flex"
+            display={onExtract ? "none" : "flex"}
             mt={2}
-            mb={25}
             alignItems="center"
             mr={2}
             flexDirection="column"
@@ -372,11 +443,12 @@ const ApplyCV = () => {
               onClick={formik.handleSubmit}
               size="large"
               sx={{ width: "50%" }}
-              disabled={onEdit}
+              disabled={onEdit || onExtract}
             >
               Submit Application
             </MKButton>
           </MKBox>
+          <MKBox mb={20} />
         </MKBox>
       ) : (
         <MKBox display="flex" flexDirection="column" alignItems="center" gap={2} mx="auto">

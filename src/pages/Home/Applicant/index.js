@@ -3,7 +3,6 @@ import axios from "axios";
 
 import { Container, Grid } from "@mui/material";
 import MKBox from "components/MKBox";
-import MKButton from "components/MKButton";
 
 import DefaultNavbar from "examples/Navbars/DefaultNavbar";
 import routes from "routes";
@@ -40,8 +39,8 @@ function HomeApplicant() {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       })
-      .then((response) => {
-        const newJobs = response.data.data.map((job) => convertBe2FeJob(job));
+      .then((res) => {
+        const newJobs = res.data.data.map((job) => convertBe2FeJob(job));
         setJobs(newJobs);
       })
       .catch((error) => {
@@ -56,8 +55,8 @@ function HomeApplicant() {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       })
-      .then((response) => {
-        setSelectedJob(convertBe2FeJob(response.data));
+      .then((res) => {
+        setSelectedJob(convertBe2FeJob(res.data));
       })
       .catch((error) => {
         console.log(error);
@@ -69,8 +68,6 @@ function HomeApplicant() {
       selectJob(jobId);
     }
   }, [jobId]);
-
-  const searchJobs = () => {};
 
   return (
     <Container>

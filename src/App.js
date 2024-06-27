@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 
 // react-router components
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
@@ -14,7 +14,7 @@ import SignUpApplicant from "pages/Authentication/SignUp/Applicant";
 import SignUpCompany from "pages/Authentication/SignUp/Company";
 import HomeApplicant from "pages/Home/Applicant";
 
-import { convertResponseRole } from "utils/functions";
+import { convertRole } from "utils/functions";
 
 import routes from "utils/enums/routes";
 
@@ -27,7 +27,7 @@ export default function App() {
         return <Route exact path={route.route} element={route.component} key={route.name} />;
       }
 
-      if (route.for === convertResponseRole(localStorage.getItem("role"))) {
+      if (route.for === convertRole(localStorage.getItem("role"))) {
         return <Route exact path={route.route} element={route.component} key={route.name} />;
       }
 
@@ -49,9 +49,7 @@ export default function App() {
             {getFilteredRoutes(routes)}
             <Route
               path="*"
-              element={
-                <Navigate to={`/${convertResponseRole(localStorage.getItem("role"))}/home`} />
-              }
+              element={<Navigate to={`/${convertRole(localStorage.getItem("role"))}/home`} />}
             />
           </>
         ) : (
@@ -60,6 +58,7 @@ export default function App() {
             <Route path="/applicant/sign-up" element={<SignUpApplicant />} />
             <Route path="/company/sign-up" element={<SignUpCompany />} />
             <Route path="/applicant/home" element={<HomeApplicant />} />
+            <Route path="*" element={<Navigate to="/sign-in" />} />
           </>
         )}
       </Routes>

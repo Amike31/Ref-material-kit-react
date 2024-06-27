@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import axios from "axios";
 
 // react-router-dom components
@@ -18,7 +18,7 @@ import DefaultNavbar from "examples/Navbars/DefaultNavbar";
 
 // Material Kit 2 React page layout routes
 import routes from "routes";
-import { convertResponseRole } from "utils/functions";
+import { convertRole } from "utils/functions";
 
 // other packages
 import { useFormik } from "formik";
@@ -69,7 +69,7 @@ export default function SignInBasic() {
               if (location.state?.next) {
                 navigate(location.state.next, { state: { job: location.state.job } });
               } else {
-                navigate(`/${convertResponseRole(res.data.role)}/home`);
+                navigate(`/${convertRole(res.data.role)}/home`);
               }
             })
             .catch((err) => {

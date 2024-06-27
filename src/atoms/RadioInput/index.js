@@ -1,6 +1,5 @@
-import React, { useState } from "react";
 import propTypes from "prop-types";
-import { FormControl, RadioGroup, FormControlLabel, Radio, Box } from "@mui/material";
+import { FormControl, RadioGroup, FormControlLabel, Radio } from "@mui/material";
 import MKTypography from "components/MKTypography";
 
 const RadioInput = (props) => {

@@ -4,16 +4,13 @@ import { useNavigate } from "react-router-dom";
 
 import {
   Container,
-  Grid,
   Input,
-  Autocomplete,
   Table,
   TableBody,
   TableHead,
   TableRow,
   TableCell,
   TableContainer,
-  Card,
   IconButton,
   SvgIcon,
   Stack,
@@ -26,7 +23,6 @@ import { styled } from "@mui/system";
 import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
 import MKButton from "components/MKButton";
-import MKInput from "components/MKInput";
 
 import {
   MagnifyingGlassIcon,
@@ -76,8 +72,8 @@ function HomeCompany() {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       })
-      .then((response) => {
-        setJobs(response.data.data);
+      .then((res) => {
+        setJobs(res.data.data);
       })
       .catch((error) => {
         console.log(error);

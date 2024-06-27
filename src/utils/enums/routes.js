@@ -66,7 +66,7 @@ const routes2 = [
     route: "/company/add-job",
     component: <AddJob />,
     display: true,
-    for: "company",
+    for: "all",
   },
   {
     name: "history company",
