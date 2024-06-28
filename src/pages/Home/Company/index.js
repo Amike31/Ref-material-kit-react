@@ -187,7 +187,6 @@ function HomeCompany() {
                     <NewTableCell>{job.applicants}</NewTableCell>
                     <NewTableCell>{job.offeredInterview}</NewTableCell>
                     <NewTableCell>{job.interviewed}</NewTableCell>
-                    {/* <NewTableCell>{job.interviewResult}</NewTableCell> */}
                     <TableCell align="center">
                       <Stack direction="row" spacing={1.5} justifyContent="center">
                         <IconButton onClick={() => navigate(`/company/history/${job.id}`)}>

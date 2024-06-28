@@ -21,17 +21,7 @@ import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
 import MKInput from "components/MKInput";
 
-import {
-  MagnifyingGlassIcon,
-  DocumentCheckIcon,
-  ChatBubbleLeftRightIcon,
-  ChatBubbleOvalLeftEllipsisIcon,
-  ChartBarSquareIcon,
-  XMarkIcon,
-  XCircleIcon,
-  CheckIcon,
-  CheckCircleIcon,
-} from "@heroicons/react/24/solid";
+import { MagnifyingGlassIcon, XMarkIcon, CheckIcon } from "@heroicons/react/24/solid";
 
 import { convertFloatToHundredBase } from "utils/functions";
 import Ellipsis from "atoms/Ellipsis";
@@ -53,86 +43,6 @@ const statusMap = {
   REJECTED: "error",
 };
 
-const statusIntMap = {
-  PENDING: 0,
-  AWAITING_INTERVIEW: 1,
-  INTERVIEW: 2,
-  AWAITING_EVALUATION: 3,
-  EVALUATED: 4,
-  ACCEPTED: 5,
-  REJECTED: 5,
-};
-
-const actionItems = [
-  {
-    name: "CV Details",
-    description: "AI Analysis Result",
-    icon: <DocumentCheckIcon />,
-    action: () => {
-      console.log("CV Details");
-    },
-  },
-  {
-    name: "Invite Interview",
-    description: "Invite the candidate for an interview",
-    icon: <ChatBubbleOvalLeftEllipsisIcon />,
-    action: () => {
-      console.log("Invite Interview");
-    },
-  },
-  {
-    name: "Interview Details",
-    description: "Interview Logs and Analysis",
-    icon: <ChatBubbleLeftRightIcon />,
-    action: () => {
-      console.log("Interview Details");
-    },
-  },
-  {
-    name: "Evaluation Result",
-    description: "Interview Evaluation Analysis",
-    icon: <ChartBarSquareIcon />,
-    action: () => {
-      console.log("Evaluation Result");
-    },
-  },
-  {
-    name: "Accept",
-    description: "Accept the candidate",
-    icon: <CheckCircleIcon />,
-    action: () => {
-      console.log("Accept");
-    },
-  },
-  {
-    name: "Reject",
-    description: "Reject the candidate",
-    icon: <XCircleIcon />,
-    action: () => {
-      console.log("Reject");
-    },
-  },
-];
-
-const filterActions = (statusInt) => {
-  if (statusInt === 0) {
-    // index 0 and 1
-    return [actionItems[0], actionItems[1]];
-  } else if (1 <= statusInt && statusInt <= 2) {
-    // index 0 only
-    return [actionItems[0]];
-  } else if (statusInt === 4) {
-    // index 0, 2, 3, 4, 5
-    return [actionItems[0], actionItems[2], actionItems[3], actionItems[4], actionItems[5]];
-  } else if (statusInt === 5) {
-    // index 0, 2, 3
-    return [actionItems[0], actionItems[2], actionItems[3]];
-  } else {
-    return [];
-  }
-  // return actionItems;
-};
-
 function HistoryCompany() {
   const navigate = useNavigate();
   const { jobId } = useParams();
@@ -141,9 +51,6 @@ function HistoryCompany() {
   const [applications, setApplications] = useState([]);
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
-  const checkUsers = (id) => {
-    console.log("Check users", id);
-  };
 
   const fetchApplications = () => {
     axios
@@ -258,15 +165,16 @@ function HistoryCompany() {
                                 <MKTypography
                                   variant="body2"
                                   color="white"
-                                  sx={{ textTransform: "capitalize" }}
+                                  sx={{ textTransform: "capitalize", textAlign: "center" }}
                                 >
-                                  {app.status.toLowerCase()}
+                                  {/* split app.status */}
+                                  {app.status.toLowerCase().split("_").join(" ")}
                                 </MKTypography>
                               </MKBox>
                             </MKBox>
                           </TableCell>
                           <ActionTableCell>
-                            <Ellipsis actionItems={filterActions(statusIntMap[app.status])} />
+                            <Ellipsis app={app} />
                           </ActionTableCell>
                         </TableRow>
                       ))}
