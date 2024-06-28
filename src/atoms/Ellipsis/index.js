@@ -5,6 +5,7 @@ import { Box, Popper, SvgIcon, IconButton, ButtonBase, Grow } from "@mui/materia
 import { EllipsisVerticalIcon } from "@heroicons/react/24/solid";
 import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
+import { toast } from "react-toastify";
 
 import {
   DocumentCheckIcon,
@@ -15,29 +16,21 @@ import {
   CheckCircleIcon,
 } from "@heroicons/react/24/solid";
 
-const statusIntMap = {
-  PENDING: 0,
-  AWAITING_INTERVIEW: 1,
-  INTERVIEW: 2,
-  AWAITING_EVALUATION: 3,
-  EVALUATED: 4,
-  ACCEPTED: 5,
-  REJECTED: 5,
-};
-
-const ActionDropdown = ({ app }) => {
+const ActionDropdown = ({ application }) => {
   const [dropdown, setDropdown] = useState(false);
   const [dropdownEl, setDropdownEl] = useState("");
   const [arrowRef, setArrowRef] = useState(null);
   // eslint-disable-next-line no-undef
   const hurl = process.env.REACT_APP_API_URL;
-  function inviteInterview(app) {
-    if (app.status !== "PENDING") {
-      console.log("Cannot invite interview for status", app.status);
+
+  function inviteInterview() {
+    console.log("Invite interview for", application);
+    if (application.status !== "PENDING") {
+      console.log("Cannot invite interview for status", application.status);
       return;
     }
     const data = {
-      job_application_id: app.id,
+      job_application_id: application.id,
       is_accepted: true,
     };
     axios
@@ -47,6 +40,8 @@ const ActionDropdown = ({ app }) => {
         },
       })
       .then((res) => {
+        window.location.reload();
+        toast.success("Interview invitation sent");
         console.log(res);
       })
       .catch((err) => {
@@ -103,19 +98,19 @@ const ActionDropdown = ({ app }) => {
     },
   ];
 
-  const filterActions = (statusInt) => {
+  const filterActions = (status) => {
     // return actionItems;
     // eslint-disable-next-line no-unreachable
-    if (statusInt === 0) {
+    if (status === "PENDING") {
       // index 0 and 1
       return [actionItems[0], actionItems[1]];
-    } else if (1 <= statusInt && statusInt <= 2) {
+    } else if (status === "AWAITING_INTERVIEW" || status === "INTERVIEW") {
       // index 0 only
       return [actionItems[0]];
-    } else if (statusInt === 4) {
+    } else if (status === "AWAITING_EVALUATION" || status === "EVALUATED") {
       // index 0, 2, 3, 4, 5
       return [actionItems[0], actionItems[2], actionItems[3], actionItems[4], actionItems[5]];
-    } else if (statusInt === 5) {
+    } else if (status === "ACCEPTED" || status === "REJECTED") {
       // index 0, 2, 3
       return [actionItems[0], actionItems[2], actionItems[3]];
     } else {
@@ -158,7 +153,7 @@ const ActionDropdown = ({ app }) => {
             }}
           >
             <MKBox shadow="lg" borderRadius="lg" p={2} mt={2} gap={2}>
-              {filterActions(statusIntMap[app.status]).map((item, index) => (
+              {filterActions(application.status).map((item, index) => (
                 <MKBox key={index} display="flex" sx={{ width: "100%" }} py={0.5}>
                   <ButtonBase onClick={item.action} sx={{ width: "100%" }}>
                     {/* inside */}
@@ -189,7 +184,7 @@ const ActionDropdown = ({ app }) => {
 };
 
 ActionDropdown.propTypes = {
-  app: propTypes.object,
+  application: propTypes.object,
 };
 
 export default ActionDropdown;

@@ -43,6 +43,17 @@ const statusMap = {
   REJECTED: "error",
 };
 
+function convertStatusCompany(status) {
+  if (status === "PENDING") return "Need Review";
+  if (status === "AWAITING_INTERVIEW") return "Need Interview";
+  if (["INTERVIEW"].includes(status)) return "Interviewing";
+  if (status === "INTERVIEW") return "Interviewing";
+  if (["AWAITING_EVALUATION", "EVALUATED"].includes(status)) return "Interview Done";
+  if (status === "ACCEPTED") return "Accepted";
+  if (status === "REJECTED") return "Rejected";
+  return status;
+}
+
 function HistoryCompany() {
   const navigate = useNavigate();
   const { jobId } = useParams();
@@ -111,28 +122,28 @@ function HistoryCompany() {
                         <TableCell align="center" sx={{ width: "9%" }}>
                           CV Relevance
                         </TableCell>
-                        <TableCell align="center" sx={{ width: "15%" }}>
+                        <TableCell align="center" sx={{ width: "17%" }}>
                           Status
                         </TableCell>
                         <ActionTableCell>Actions</ActionTableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody display={loading ? "none" : "table-row-group"}>
-                      {applications.map((app) => (
-                        <TableRow key={app.id}>
+                      {applications.map((application) => (
+                        <TableRow key={application.id}>
                           <TableCell>
                             <MKTypography
                               variant="body2"
                               color="info"
                               sx={{ fontWeight: "bold", fontDecoration: "underline" }}
                             >
-                              {app.jobTitle}
+                              {application.jobTitle}
                             </MKTypography>
                           </TableCell>
-                          <TableCell>{app.userName}</TableCell>
+                          <TableCell>{application.userName}</TableCell>
                           <TableCell align="center">
                             <MKTypography variant="body2" color="info">
-                              {convertFloatToHundredBase(app.relevanceScore)}
+                              {convertFloatToHundredBase(application.relevanceScore)}
                             </MKTypography>
                           </TableCell>
                           <TableCell align="center">
@@ -144,9 +155,9 @@ function HistoryCompany() {
                             >
                               <SvgIcon
                                 fontSize="normal"
-                                color={app.relevance ? "success" : "error"}
+                                color={application.relevance ? "success" : "error"}
                               >
-                                {app.relevance ? <CheckIcon /> : <XMarkIcon />}
+                                {application.relevance ? <CheckIcon /> : <XMarkIcon />}
                               </SvgIcon>
                             </MKBox>
                           </TableCell>
@@ -155,11 +166,11 @@ function HistoryCompany() {
                               sx={{ display: "flex", justifyContent: "center", width: "100%" }}
                             >
                               <MKBox
-                                bgColor={statusMap[app.status]}
+                                bgColor={statusMap[application.status]}
                                 sx={{
                                   borderRadius: 20,
                                   padding: "0.5rem 2rem",
-                                  width: "fit-content",
+                                  width: "100%",
                                 }}
                               >
                                 <MKTypography
@@ -167,14 +178,14 @@ function HistoryCompany() {
                                   color="white"
                                   sx={{ textTransform: "capitalize", textAlign: "center" }}
                                 >
-                                  {/* split app.status */}
-                                  {app.status.toLowerCase().split("_").join(" ")}
+                                  {/* split application.status */}
+                                  {convertStatusCompany(application.status)}
                                 </MKTypography>
                               </MKBox>
                             </MKBox>
                           </TableCell>
                           <ActionTableCell>
-                            <Ellipsis app={app} />
+                            <Ellipsis application={application} />
                           </ActionTableCell>
                         </TableRow>
                       ))}

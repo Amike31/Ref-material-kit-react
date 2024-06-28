@@ -169,7 +169,7 @@ const JobDetail = (props) => {
         </Card>
       ) : (
         <>
-          {loadingDetail ? (
+          {(!isFull && loadingDetail) || isFull ? (
             <MKBox
               item
               xs={12}

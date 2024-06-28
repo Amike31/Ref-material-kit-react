@@ -28,11 +28,14 @@ import SignIn from "pages/Authentication/SignIn";
 
 import SignUpApplicant from "pages/Authentication/SignUp/Applicant";
 import HomeApplicant from "pages/Home/Applicant";
-import ApplyCV from "pages/Application/Applicant/ApplyCV";
+import HistoryApplicant from "pages/Application/Applicant/History";
+import Interview from "pages/Application/Applicant/Interview";
 
 import SignUpCompany from "pages/Authentication/SignUp/Company";
 import HomeCompany from "pages/Home/Company";
 import AddJob from "pages/Home/Company/AddJob";
+import HistoryCompany from "pages/Application/Company/History";
+import InterviewResult from "pages/Application/Company/InterviewResult";
 
 import Avatars from "layouts/sections/elements/avatars";
 import Badges from "layouts/sections/elements/badges";
@@ -78,9 +81,15 @@ const routes = [
             for: "applicant",
           },
           {
-            name: "apply cv",
-            route: "/applicant/apply-cv/:id",
-            component: <ApplyCV />,
+            name: "history applicant",
+            route: "/applicant/history",
+            component: <HistoryApplicant />,
+            for: "applicant",
+          },
+          {
+            name: "interview",
+            route: "/applicant/interview/:id",
+            component: <Interview />,
             for: "applicant",
           },
         ],
@@ -104,6 +113,18 @@ const routes = [
             name: "add job",
             route: "/company/add-job",
             component: <AddJob />,
+            for: "company",
+          },
+          {
+            name: "history company",
+            route: "/company/history",
+            component: <HistoryCompany />,
+            for: "company",
+          },
+          {
+            name: "interview result",
+            route: "/company/interview-result/:id",
+            component: <InterviewResult />,
             for: "company",
           },
         ],

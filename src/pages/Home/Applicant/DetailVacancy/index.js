@@ -43,13 +43,13 @@ function DetailVacancy() {
 
   return (
     <Container>
-      <DefaultNavbar routes={routes} relative transparent />
       <MKBox
         display="flex"
         justifyContent="center"
         alignItems="center"
-        mb={7}
         sx={{ width: "100%" }}
+        minHeight="90vh"
+        py={2}
       >
         <JobDetail selectedJob={job} setSelectedJob={setJob} isFull />
       </MKBox>

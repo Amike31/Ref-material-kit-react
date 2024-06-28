@@ -447,7 +447,12 @@ const ApplyCV = () => {
           </MKTypography>
           <MKBox display="flex" justifyContent="center" gap={10} mt={2}>
             {/* onclick go to history page */}
-            <MKButton variant="contained" color="primary" size="large">
+            <MKButton
+              variant="contained"
+              color="primary"
+              size="large"
+              onClick={() => navigate("/applicant/history")}
+            >
               Go to history page
             </MKButton>
             <MKButton variant="contained" color="info" size="large" onClick={() => navigate(-1)}>

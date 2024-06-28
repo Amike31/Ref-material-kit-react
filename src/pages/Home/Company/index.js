@@ -88,7 +88,7 @@ function HomeCompany() {
 
   return (
     <Container>
-      <Stack direction="column" spacing={2} mt={3} height="calc(100vh - 98px)">
+      <Stack direction="column" spacing={2} mt={3} minHeight="calc(100vh - 98px)">
         {/* Search bar and add button */}
         <Stack direction="row" spacing={5} justifyContent="space-between" px={1} pb={1}>
           <MKTypography variant="h3" sx={{ width: "40%" }}>
