@@ -37,15 +37,6 @@ import AddJob from "pages/Home/Company/AddJob";
 import HistoryCompany from "pages/Application/Company/History";
 import InterviewResult from "pages/Application/Company/InterviewResult";
 
-import Avatars from "layouts/sections/elements/avatars";
-import Badges from "layouts/sections/elements/badges";
-import BreadcrumbsEl from "layouts/sections/elements/breadcrumbs";
-import Buttons from "layouts/sections/elements/buttons";
-import Dropdowns from "layouts/sections/elements/dropdowns";
-import ProgressBars from "layouts/sections/elements/progress-bars";
-import Toggles from "layouts/sections/elements/toggles";
-import Typography from "layouts/sections/elements/typography";
-
 const routes = [
   // {
   //   name: "Home",
@@ -126,67 +117,6 @@ const routes = [
             route: "/company/interview-result/:id",
             component: <InterviewResult />,
             for: "company",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    name: "sections",
-    icon: <Icon>view_day</Icon>,
-    collapse: [
-      {
-        name: "elements",
-        description: "See all 32 examples",
-        dropdown: true,
-        collapse: [
-          {
-            name: "avatars",
-            route: "/sections/elements/avatars",
-            component: <Avatars />,
-            for: "all",
-          },
-          {
-            name: "badges",
-            route: "/sections/elements/badges",
-            component: <Badges />,
-            for: "all",
-          },
-          {
-            name: "breadcrumbs",
-            route: "/sections/elements/breadcrumbs",
-            component: <BreadcrumbsEl />,
-            for: "all",
-          },
-          {
-            name: "buttons",
-            route: "/sections/elements/buttons",
-            component: <Buttons />,
-            for: "all",
-          },
-          {
-            name: "dropdowns",
-            route: "/sections/elements/dropdowns",
-            component: <Dropdowns />,
-            for: "all",
-          },
-          {
-            name: "progress bars",
-            route: "/sections/elements/progress-bars",
-            component: <ProgressBars />,
-            for: "all",
-          },
-          {
-            name: "toggles",
-            route: "/sections/elements/toggles",
-            component: <Toggles />,
-            for: "all",
-          },
-          {
-            name: "typography",
-            route: "/sections/elements/typography",
-            component: <Typography />,
-            for: "all",
           },
         ],
       },

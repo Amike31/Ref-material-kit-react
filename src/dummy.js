@@ -1,5 +1,4 @@
 /* eslint-disable prettier/prettier */
-import team1 from "assets/images/team-5.jpg";
 import { majors } from "utils/enums/majors";
 import { cities } from "utils/enums/cities";
 const oneDay = 86400000;
@@ -65,17 +64,6 @@ dJobs.push({
   updatedAt: new Date(Date.now() - 60 * oneDay), // date
 });
 
-import fcv1 from "utils/files/cv1.pdf";
-import fcv2 from "utils/files/cv2.pdf";
-import fcv3 from "utils/files/cv3.pdf";
-import fdefcv from "utils/files/defcv.pdf";
-
-const cv1 = { name: fcv1.split("/").pop(), file: fcv1 };
-const cv2 = { name: fcv2.split("/").pop(), file: fcv2 };
-const cv3 = { name: fcv3.split("/").pop(), file: fcv3 };
-const defcv = { name: fdefcv.split("/").pop(), file: fdefcv };
-const recent = [defcv, cv1, cv2, cv3];
-
 const user = {
   name: "John Doe",
   email: "c@gmail.com",
@@ -96,4 +84,4 @@ const apps = [
   }
 ]
 
-export { dJobs, recent, user, apps };
+export { dJobs, user, apps };
