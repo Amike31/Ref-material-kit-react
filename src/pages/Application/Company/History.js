@@ -33,11 +33,9 @@ import {
   CheckCircleIcon,
 } from "@heroicons/react/24/solid";
 
-import DefaultNavbar from "examples/Navbars/DefaultNavbar";
-import routes from "routes";
-
 import { convertFloatToHundredBase } from "utils/functions";
 import Ellipsis from "atoms/Ellipsis";
+import SpinningBar from "atoms/SpinningBar";
 
 const ActionTableCell = styled(TableCell)({
   textAlign: "center",
@@ -142,6 +140,7 @@ function HistoryCompany() {
   const url = process.env.REACT_APP_API_URL;
   const [applications, setApplications] = useState([]);
   const [query, setQuery] = useState("");
+  const [loading, setLoading] = useState(false);
   const checkUsers = (id) => {
     console.log("Check users", id);
   };
@@ -155,6 +154,7 @@ function HistoryCompany() {
       })
       .then((res) => {
         setApplications(res.data.data);
+        setLoading(false);
       })
       .catch((err) => {
         console.log(err);
@@ -162,13 +162,13 @@ function HistoryCompany() {
   };
 
   useEffect(() => {
+    setLoading(true);
     fetchApplications();
   }, []);
 
   return (
     <Container>
-      <DefaultNavbar routes={routes} relative transparent />
-      <Grid container spacing={2}>
+      <Grid container spacing={2} height="calc(100vh - 53px)">
         <Grid item xs={12}>
           <MKBox p={2}>
             <Grid container spacing={2}>
@@ -210,7 +210,7 @@ function HistoryCompany() {
                         <ActionTableCell>Actions</ActionTableCell>
                       </TableRow>
                     </TableHead>
-                    <TableBody>
+                    <TableBody display={loading ? "none" : "table-row-group"}>
                       {applications.map((app) => (
                         <TableRow key={app.id}>
                           <TableCell>
@@ -272,6 +272,18 @@ function HistoryCompany() {
                       ))}
                     </TableBody>
                   </Table>
+                  {loading && (
+                    <MKBox
+                      display="flex"
+                      flexDirection="column"
+                      justifyContent="center"
+                      alignItems="center"
+                      minHeight="30vh"
+                      gap={2}
+                    >
+                      <SpinningBar />
+                    </MKBox>
+                  )}
                 </TableContainer>
               </Grid>
             </Grid>

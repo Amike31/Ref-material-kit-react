@@ -5,7 +5,7 @@ import axios from "axios";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 // @mui material components
-import { Card, Switch, Grid, InputAdornment, IconButton, SvgIcon } from "@mui/material";
+import { Card, Switch, Grid, InputAdornment, IconButton, SvgIcon, Container } from "@mui/material";
 
 // Material Kit 2 React components
 import MKBox from "components/MKBox";
@@ -13,17 +13,12 @@ import MKTypography from "components/MKTypography";
 import MKInput from "components/MKInput";
 import MKButton from "components/MKButton";
 
-// Material Kit 2 React example components
-import DefaultNavbar from "examples/Navbars/DefaultNavbar";
-
-// Material Kit 2 React page layout routes
-import routes from "routes";
 import { convertRole } from "utils/functions";
 
 // other packages
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 // icons
@@ -86,11 +81,7 @@ export default function SignInBasic() {
   });
 
   return (
-    <MKBox bgColor="#dddeea">
-      <MKBox bgColor="white" shadow="sm">
-        <DefaultNavbar routes={routes} sticky relative transparent />
-      </MKBox>
-      <ToastContainer />
+    <Container>
       <MKBox
         px={1}
         width="100%"
@@ -205,6 +196,6 @@ export default function SignInBasic() {
           </Grid>
         </Grid>
       </MKBox>
-    </MKBox>
+    </Container>
   );
 }

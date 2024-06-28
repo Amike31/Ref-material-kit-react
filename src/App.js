@@ -13,10 +13,14 @@ import SignInBasic from "pages/Authentication/SignIn";
 import SignUpApplicant from "pages/Authentication/SignUp/Applicant";
 import SignUpCompany from "pages/Authentication/SignUp/Company";
 import HomeApplicant from "pages/Home/Applicant";
+import { ToastContainer } from "react-toastify";
 
 import { convertRole } from "utils/functions";
+import MKBox from "components/MKBox";
+import DefaultNavbar from "examples/Navbars/DefaultNavbar";
 
 import routes from "utils/enums/routes";
+import routes2 from "routes";
 
 export default function App() {
   const { pathname } = useLocation();
@@ -43,25 +47,31 @@ export default function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Routes>
-        {localStorage.getItem("token") ? (
-          <>
-            {getFilteredRoutes(routes)}
-            <Route
-              path="*"
-              element={<Navigate to={`/${convertRole(localStorage.getItem("role"))}/home`} />}
-            />
-          </>
-        ) : (
-          <>
-            <Route path="/sign-in" element={<SignInBasic />} />
-            <Route path="/applicant/sign-up" element={<SignUpApplicant />} />
-            <Route path="/company/sign-up" element={<SignUpCompany />} />
-            <Route path="/applicant/home" element={<HomeApplicant />} />
-            <Route path="*" element={<Navigate to="/sign-in" />} />
-          </>
-        )}
-      </Routes>
+      <ToastContainer />
+      <MKBox bgColor="#dddeea">
+        <MKBox bgColor="white" shadow="sm">
+          <DefaultNavbar routes={routes2} sticky relative transparent />
+        </MKBox>
+        <Routes>
+          {localStorage.getItem("token") ? (
+            <>
+              {getFilteredRoutes(routes)}
+              <Route
+                path="*"
+                element={<Navigate to={`/${convertRole(localStorage.getItem("role"))}/home`} />}
+              />
+            </>
+          ) : (
+            <>
+              <Route path="/sign-in" element={<SignInBasic />} />
+              <Route path="/applicant/sign-up" element={<SignUpApplicant />} />
+              <Route path="/company/sign-up" element={<SignUpCompany />} />
+              <Route path="/applicant/home" element={<HomeApplicant />} />
+              <Route path="*" element={<Navigate to="/sign-in" />} />
+            </>
+          )}
+        </Routes>
+      </MKBox>
     </ThemeProvider>
   );
 }

@@ -19,9 +19,7 @@ import MKButton from "components/MKButton";
 import MKInput from "components/MKInput";
 import AddableForm from "./AddForm";
 
-import DefaultNavbar from "examples/Navbars/DefaultNavbar";
-import routes from "routes";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { Formik } from "formik";
 import * as Yup from "yup";
 
@@ -104,8 +102,6 @@ function AddJob() {
 
   return (
     <Container>
-      <DefaultNavbar routes={routes} relative transparent />
-      <ToastContainer />
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}

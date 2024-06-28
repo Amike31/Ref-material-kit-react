@@ -1,6 +1,6 @@
 import propTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
-
+import { useEffect } from "react";
 import { Card, IconButton, SvgIcon } from "@mui/material";
 import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
@@ -17,20 +17,24 @@ import {
 } from "@heroicons/react/24/solid";
 
 import { convertSalaryRange, dateDifference } from "utils/functions";
+import SpinningBar from "atoms/SpinningBar";
 
 const JobDetail = (props) => {
-  const { selectedJob, setSelectedJob, isFull } = props;
+  const { selectedJob, setSelectedJob, setJobId, loadingDetail, isFull } = props;
   const navigate = useNavigate();
 
   const cardStyle = isFull ? { width: "55%" } : { overflowY: "auto", maxHeight: "100vh" };
   return (
     <>
-      {selectedJob.id ? (
+      {selectedJob.id && !loadingDetail ? (
         <Card sx={cardStyle}>
           <MKBox px={7} py={4}>
             {!isFull ? (
               <IconButton
-                onClick={() => setSelectedJob({})}
+                onClick={() => {
+                  setSelectedJob({});
+                  setJobId(null);
+                }}
                 style={{ position: "absolute", right: 10, top: 10 }}
               >
                 <SvgIcon component={XMarkIcon} />
@@ -93,7 +97,10 @@ const JobDetail = (props) => {
                       });
                     } else {
                       navigate(`/sign-in`, {
-                        state: { next: `/applicant/apply-cv/${selectedJob.id}`, job: selectedJob },
+                        state: {
+                          next: `/applicant/apply-cv/${selectedJob.id}`,
+                          job: selectedJob,
+                        },
                       });
                     }
                   }}
@@ -161,9 +168,27 @@ const JobDetail = (props) => {
           </MKBox>
         </Card>
       ) : (
-        <MKBox p={3} display="flex" justifyContent="center">
-          <MKTypography variant="h3">Choose a job vacancy</MKTypography>
-        </MKBox>
+        <>
+          {loadingDetail ? (
+            <MKBox
+              item
+              xs={12}
+              display="flex"
+              flexDirection="column"
+              justifyContent="center"
+              alignItems="center"
+              minHeight="50vh"
+              gap={2}
+            >
+              <MKTypography variant="h5">Fetching Selected Job</MKTypography>
+              <SpinningBar />
+            </MKBox>
+          ) : (
+            <MKBox p={3} display="flex" justifyContent="center">
+              <MKTypography variant="h3">Choose a job vacancy</MKTypography>
+            </MKBox>
+          )}
+        </>
       )}
     </>
   );
@@ -172,10 +197,13 @@ const JobDetail = (props) => {
 JobDetail.propTypes = {
   selectedJob: propTypes.object.isRequired,
   setSelectedJob: propTypes.func.isRequired,
+  setJobId: propTypes.func.isRequired,
+  loadingDetail: propTypes.bool,
   isFull: propTypes.bool,
 };
 
 JobDetail.defaultProps = {
+  loadingDetail: false,
   isFull: false,
 };
 

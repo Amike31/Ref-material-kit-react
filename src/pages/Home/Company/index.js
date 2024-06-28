@@ -35,15 +35,13 @@ import {
   UsersIcon,
 } from "@heroicons/react/24/solid";
 
-import DefaultNavbar from "examples/Navbars/DefaultNavbar";
-import routes from "routes";
-
 import { convertDateString } from "utils/functions";
+import SpinningBar from "atoms/SpinningBar";
 
 const NewTableCell = styled(TableCell)({
   textAlign: "center",
   padding: "0.75rem 0.5rem",
-  maxWidth: "100px",
+  width: "120px",
 });
 
 function HomeCompany() {
@@ -52,6 +50,8 @@ function HomeCompany() {
   const url = process.env.REACT_APP_API_URL;
   const [jobs, setJobs] = useState([]);
   const [query, setQuery] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const editJob = (id) => {
     console.log("Edit job", id);
   };
@@ -74,6 +74,7 @@ function HomeCompany() {
       })
       .then((res) => {
         setJobs(res.data.data);
+        setLoading(false);
       })
       .catch((error) => {
         console.log(error);
@@ -81,13 +82,13 @@ function HomeCompany() {
   };
 
   useEffect(() => {
+    setLoading(true);
     fetchJobs();
   }, []);
 
   return (
-    <Container width="lg">
-      <DefaultNavbar routes={routes} relative transparent />
-      <Stack direction="column" spacing={2} mt={2}>
+    <Container>
+      <Stack direction="column" spacing={2} mt={3} height="calc(100vh - 98px)">
         {/* Search bar and add button */}
         <Stack direction="row" spacing={5} justifyContent="space-between" px={1} pb={1}>
           <MKTypography variant="h3" sx={{ width: "40%" }}>
@@ -145,16 +146,16 @@ function HomeCompany() {
                   <NewTableCell sx={{ width: "80px", paddingLeft: "20px" }}>
                     Open Status
                   </NewTableCell>
-                  <TableCell align="center" sx={{ minWidth: "200px" }}>
+                  <TableCell align="center" sx={{ flexGrow: 1 }}>
                     Job
                   </TableCell>
                   <NewTableCell>Applied</NewTableCell>
                   <NewTableCell>Interview Offered</NewTableCell>
                   <NewTableCell>Interviewed</NewTableCell>
-                  <NewTableCell sx={{ minWidth: "100px" }}>Actions</NewTableCell>
+                  <NewTableCell sx={{ width: "280px" }}>Actions</NewTableCell>
                 </TableRow>
               </TableHead>
-              <TableBody>
+              <TableBody display={loading ? "none" : "table-row-group"}>
                 {jobs.map((job, index) => (
                   <TableRow key={index}>
                     <NewTableCell sx={{ width: "50px", paddingLeft: "20px" }}>
@@ -216,6 +217,18 @@ function HomeCompany() {
                 ))}
               </TableBody>
             </Table>
+            {loading && (
+              <MKBox
+                display="flex"
+                flexDirection="column"
+                justifyContent="center"
+                alignItems="center"
+                minHeight="30vh"
+                gap={2}
+              >
+                <SpinningBar />
+              </MKBox>
+            )}
           </TableContainer>
         </MKBox>
       </Stack>

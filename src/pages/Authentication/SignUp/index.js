@@ -11,6 +11,7 @@ import {
   IconButton,
   SvgIcon,
   TextField,
+  Container,
 } from "@mui/material";
 
 import MKBox from "components/MKBox";
@@ -18,12 +19,9 @@ import MKTypography from "components/MKTypography";
 import MKInput from "components/MKInput";
 import MKButton from "components/MKButton";
 
-import DefaultNavbar from "examples/Navbars/DefaultNavbar";
-import routes from "routes";
-
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 
 import EyeIcons from "@heroicons/react/24/solid/EyeIcon";
 import EyeSlashIcon from "@heroicons/react/24/solid/EyeSlashIcon";
@@ -80,11 +78,7 @@ function SignUpBasic({ role }) {
   });
 
   return (
-    <MKBox bgColor="#dddeea">
-      <MKBox bgColor="white" shadow="sm">
-        <DefaultNavbar routes={routes} sticky relative transparent />
-      </MKBox>
-      <ToastContainer />
+    <Container>
       <MKBox
         mt={3.5}
         px={1}
@@ -92,7 +86,7 @@ function SignUpBasic({ role }) {
         mx="auto"
         position="relative"
         zIndex={2}
-        sx={{ maxWidth: "1720px", minHeight: "calc(100vh - 88.5px)" }}
+        sx={{ maxWidth: "1720px", height: "calc(100vh - 88.5px)" }}
       >
         <Grid
           container
@@ -269,7 +263,7 @@ function SignUpBasic({ role }) {
           </Grid>
         </Grid>
       </MKBox>
-    </MKBox>
+    </Container>
   );
 }
 

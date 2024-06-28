@@ -1,40 +1,28 @@
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
-import { keyframes } from "@emotion/react";
+import { useLocation, useParams, useNavigate } from "react-router-dom";
 
-import { Container, Input, Stack, SvgIcon } from "@mui/material";
+import { Container, Input, Stack } from "@mui/material";
 import MKBox from "components/MKBox";
 import MKButton from "components/MKButton";
 import MKInput from "components/MKInput";
 import MKTypography from "components/MKTypography";
 
-import DefaultNavbar from "examples/Navbars/DefaultNavbar";
-import routes from "routes";
-
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
 import { convertFullDateString } from "utils/functions";
+import { toast } from "react-toastify";
 
 import AddableForm from "atoms/AddableForm";
-
-import { ArrowPathIcon } from "@heroicons/react/24/solid";
-
-const spin = keyframes`
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-`;
+import SpinningBar from "atoms/SpinningBar";
 
 const ApplyCV = () => {
   // eslint-disable-next-line no-undef
   const url = process.env.REACT_APP_API_URL;
   const { id: jobId } = useParams();
   const location = useLocation();
+  const navigate = useNavigate();
   const { job } = location.state || {};
   const inputRef = useRef();
 
@@ -79,9 +67,12 @@ const ApplyCV = () => {
           },
         })
         .then((res) => {
+          toast.success("Application submitted successfully");
+          // go to history page
           console.log(res);
         })
         .catch((error) => {
+          toast.error("Failed to submit application");
           console.log(error);
         });
     },
@@ -178,8 +169,6 @@ const ApplyCV = () => {
 
   return (
     <Container>
-      <DefaultNavbar routes={routes} relative transparent />
-
       {!job.applied ? (
         <MKBox width="85%" mx="auto" mt={3} display="flex" flexDirection="column" gap={3}>
           {/* job short detail */}
@@ -404,16 +393,7 @@ const ApplyCV = () => {
                 <MKTypography variant="body2" sx={{ color: "grey" }}>
                   Please wait while we extract your CV data
                 </MKTypography>
-                <SvgIcon
-                  component={ArrowPathIcon}
-                  py={3}
-                  sx={{
-                    width: 100,
-                    height: 100,
-                    color: "grey",
-                    animation: `${spin} 3s linear infinite`,
-                  }}
-                />
+                <SpinningBar size={100} />
               </MKBox>
             )}
           </MKBox>
@@ -451,15 +431,29 @@ const ApplyCV = () => {
           <MKBox mb={20} />
         </MKBox>
       ) : (
-        <MKBox display="flex" flexDirection="column" alignItems="center" gap={2} mx="auto">
+        <MKBox
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          gap={3}
+          mx="auto"
+          minHeight="92vh"
+          pt={10}
+        >
           <MKTypography variant="h3">You have applied to this job</MKTypography>
           <MKTypography variant="body1">
             Job vacancy only can be applied once. You can view your application status on your
             history page.
           </MKTypography>
-          <MKButton variant="contained" color="primary" size="large">
-            Go to history page
-          </MKButton>
+          <MKBox display="flex" justifyContent="center" gap={10} mt={2}>
+            {/* onclick go to history page */}
+            <MKButton variant="contained" color="primary" size="large">
+              Go to history page
+            </MKButton>
+            <MKButton variant="contained" color="info" size="large" onClick={() => navigate(-1)}>
+              Aplly to another job
+            </MKButton>
+          </MKBox>
         </MKBox>
       )}
     </Container>
