@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import {
   Container,
@@ -55,7 +55,6 @@ function convertStatusCompany(status) {
 }
 
 function HistoryCompany() {
-  const navigate = useNavigate();
   const { jobId } = useParams();
   // eslint-disable-next-line no-undef
   const url = process.env.REACT_APP_API_URL;

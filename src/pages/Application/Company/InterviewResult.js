@@ -1,8 +1,8 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import propTypes from "prop-types";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { Container, SvgIcon, TextField, IconButton } from "@mui/material";
+import { useParams, useLocation } from "react-router-dom";
+import { Container, SvgIcon } from "@mui/material";
 import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
 
@@ -11,11 +11,8 @@ import { CpuChipIcon, UserCircleIcon } from "@heroicons/react/24/solid";
 const InterviewResult = ({ interviewScore, isEvaluationDone }) => {
   // eslint-disable-next-line no-undef
   const url = process.env.REACT_APP_API_URL;
-  const navigate = useNavigate();
   const { pathname } = useLocation();
   const { id: applicationId } = useParams();
-  const [loading, setLoading] = useState(true);
-  const [status, setStatus] = useState("ON_GOING");
   const [history, setHistory] = useState([]);
 
   // scroll to bottom when changing the route
@@ -34,12 +31,9 @@ const InterviewResult = ({ interviewScore, isEvaluationDone }) => {
       })
       .then((res) => {
         setHistory(res.data.chat_logs);
-        setStatus(res.data.status);
-        setLoading(false);
       })
       .catch((err) => {
         console.error(err);
-        setLoading(false);
       });
   }, []);
 

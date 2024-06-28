@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import propTypes from "prop-types";
 import { Box, Popper, SvgIcon, IconButton, ButtonBase, Grow } from "@mui/material";
 import { EllipsisVerticalIcon } from "@heroicons/react/24/solid";
@@ -11,7 +12,6 @@ import {
   DocumentCheckIcon,
   ChatBubbleLeftRightIcon,
   ChatBubbleOvalLeftEllipsisIcon,
-  ChartBarSquareIcon,
   XCircleIcon,
   CheckCircleIcon,
 } from "@heroicons/react/24/solid";
@@ -19,14 +19,12 @@ import {
 const ActionDropdown = ({ application }) => {
   const [dropdown, setDropdown] = useState(false);
   const [dropdownEl, setDropdownEl] = useState("");
-  const [arrowRef, setArrowRef] = useState(null);
+  const navigate = useNavigate();
   // eslint-disable-next-line no-undef
   const hurl = process.env.REACT_APP_API_URL;
 
   function inviteInterview() {
-    console.log("Invite interview for", application);
     if (application.status !== "PENDING") {
-      console.log("Cannot invite interview for status", application.status);
       return;
     }
     const data = {
@@ -52,7 +50,7 @@ const ActionDropdown = ({ application }) => {
   const actionItems = [
     {
       name: "CV Details",
-      description: "AI Analysis Result",
+      description: "View CV and Matching Score",
       icon: <DocumentCheckIcon />,
       action: () => {
         console.log("CV Details");
@@ -66,18 +64,10 @@ const ActionDropdown = ({ application }) => {
     },
     {
       name: "Interview Details",
-      description: "Interview Logs and Analysis",
+      description: "Interview Logs and Result Analysis",
       icon: <ChatBubbleLeftRightIcon />,
       action: () => {
-        console.log("Interview Details");
-      },
-    },
-    {
-      name: "Evaluation Result",
-      description: "Interview Evaluation Analysis",
-      icon: <ChartBarSquareIcon />,
-      action: () => {
-        console.log("Evaluation Result");
+        navigate(`/company/interview-result/${application.id}`);
       },
     },
     {
@@ -104,15 +94,18 @@ const ActionDropdown = ({ application }) => {
     if (status === "PENDING") {
       // index 0 and 1
       return [actionItems[0], actionItems[1]];
-    } else if (status === "AWAITING_INTERVIEW" || status === "INTERVIEW") {
+    } else if (status === "AWAITING_INTERVIEW") {
       // index 0 only
       return [actionItems[0]];
-    } else if (status === "AWAITING_EVALUATION" || status === "EVALUATED") {
-      // index 0, 2, 3, 4, 5
-      return [actionItems[0], actionItems[2], actionItems[3], actionItems[4], actionItems[5]];
-    } else if (status === "ACCEPTED" || status === "REJECTED") {
-      // index 0, 2, 3
-      return [actionItems[0], actionItems[2], actionItems[3]];
+    } else if (status === "INTERVIEW") {
+      // index 0, 2
+      return [actionItems[0], actionItems[2]];
+    } else if (status === "EVALUATED") {
+      // index 0, 2, 3, 4
+      return [actionItems[0], actionItems[2], actionItems[3], actionItems[4]];
+    } else if (status === "AWAITING_EVALUATION" || status === "ACCEPTED" || status === "REJECTED") {
+      // index 0, 2
+      return [actionItems[0], actionItems[2]];
     } else {
       return [];
     }
@@ -130,15 +123,6 @@ const ActionDropdown = ({ application }) => {
         placement="bottom-start"
         transition
         style={{ zIndex: 10 }}
-        modifiers={[
-          {
-            name: "arrow",
-            enabled: true,
-            options: {
-              element: arrowRef,
-            },
-          },
-        ]}
         onMouseEnter={() => setDropdown(true)}
         onMouseLeave={() => {
           setDropdown(false);

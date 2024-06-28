@@ -1,6 +1,5 @@
 import propTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 import { Card, IconButton, SvgIcon } from "@mui/material";
 import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";

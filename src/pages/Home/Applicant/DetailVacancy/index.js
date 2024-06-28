@@ -5,9 +5,6 @@ import { useParams } from "react-router-dom";
 import { Container } from "@mui/material";
 import MKBox from "components/MKBox";
 
-import DefaultNavbar from "examples/Navbars/DefaultNavbar";
-import routes from "routes";
-
 // Pages Section Components
 import JobDetail from "sections/Applicant/Home/JobDetail";
 

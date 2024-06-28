@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import {
   Container,
@@ -24,9 +24,6 @@ import MKInput from "components/MKInput";
 import MKButton from "components/MKButton";
 
 import { MagnifyingGlassIcon, EyeIcon } from "@heroicons/react/24/solid";
-
-import { convertFloatToHundredBase } from "utils/functions";
-import Ellipsis from "atoms/Ellipsis";
 import SpinningBar from "atoms/SpinningBar";
 
 const ActionTableCell = styled(TableCell)({
@@ -57,7 +54,6 @@ function convertStatusApplicant(status) {
 
 function HistoryApplicant() {
   const navigate = useNavigate();
-  const { jobId } = useParams();
   // eslint-disable-next-line no-undef
   const url = process.env.REACT_APP_API_URL;
   const [applications, setApplications] = useState([]);

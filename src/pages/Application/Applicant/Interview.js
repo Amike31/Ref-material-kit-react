@@ -6,12 +6,7 @@ import { Container, SvgIcon, TextField, IconButton } from "@mui/material";
 import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
 
-import {
-  CpuChipIcon,
-  UserCircleIcon,
-  ChevronDoubleUpIcon,
-  ArrowUpCircleIcon,
-} from "@heroicons/react/24/solid";
+import { CpuChipIcon, UserCircleIcon, ArrowUpCircleIcon } from "@heroicons/react/24/solid";
 
 const Interview = () => {
   // eslint-disable-next-line no-undef

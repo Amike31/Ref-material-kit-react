@@ -39,16 +39,12 @@ const ApplyCV = () => {
     initialValues: {
       name: localStorage.getItem("name"),
       email: localStorage.getItem("email"),
-      // experiences: [
-      //   { start: null, end: null, designation: "", company: "", experience_description: "" },
-      // ],
-      // educations: [{ start: null, end: null, major: "", campus: "", GPA: 0 }],
     },
     validationSchema: Yup.object({
       name: Yup.string().required("Name is required"),
       email: Yup.string().email("Invalid email address").required("Email is required"),
     }),
-    onSubmit: (values) => {
+    onSubmit: () => {
       const experience = {
         educations: educations,
         experiences: experiences,
@@ -59,7 +55,6 @@ const ApplyCV = () => {
         cv_id: selectedCVId,
         experience: experience,
       };
-      console.log("Submit", data);
       axios
         .post(`${url}/api/job/apply`, data, {
           headers: {
@@ -162,8 +157,6 @@ const ApplyCV = () => {
   };
 
   useEffect(() => {
-    console.log("job", job);
-    console.log("job applied", job.applied);
     getRecentCVs();
   }, []);
 
